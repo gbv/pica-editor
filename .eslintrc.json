@@ -1,0 +1,16 @@
+{
+  "env": {
+    "commonjs": true,
+    "es2020": true,
+    "browser": true,
+    "mocha": true
+  },
+  "extends": [
+    "gbv",
+    "gbv/vue",
+    "plugin:vue/vue3-recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 11
+  }
+}
