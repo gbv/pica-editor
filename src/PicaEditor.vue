@@ -49,6 +49,7 @@ import CodeMirror from "codemirror"
 import "./codemirror-pica.js"
 
 // TODO: import from node_modules/codemirror
+import "./codemirror.min.css"
 import "./addon/active-line.js"
 
 function getTextChildren(nodes) {
@@ -181,40 +182,34 @@ export default {
 }
 </script>
 
-<style>
-@import './codemirror.min.css';
-
+<style scoped>
 .PicaEditor {
   border: 1px solid #ddd;
 }
 
-.PicaEditor .CodeMirror {
+.CodeMirror {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   height: auto;
 }
 
-.PicaEditor .panel {
+.panel {
   background: #f7f7f7;
   padding: 3px 7px;
 }
-.PicaEditor .panel ul {
+.panel ul {
   display: inline;
   list-style: none;
   padding: 0;
 }
-.PicaEditor .panel li {
+.panel li {
   display: inline;
   padding-right: 0.5em;
 }
-.PicaEditor .panel a {
+.panel a {
   text-decoration: none;
 }
-.PicaEditor .panel a:hover {
+.panel a:hover {
   text-decoration: underline;
-}
-.helpline {
-  padding: 3px;
-  height: 1.2em;
 }
 </style>

@@ -1,18 +1,79 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
  <head>
   <meta charset="utf-8">
-  <title>pica-editor</title>
+  <title>pica-editor demo (UMD)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="//unpkg.com/codemirror@5.57.0/lib/codemirror.css">
+  <style>
+    pre { padding: 4px; }
+    .CodeMirror { height: auto; }
+    h1 { font-family: sans-serif; }
+  </style>
+  <script src="//unpkg.com/vue@3.0.0-rc.8"></script>
+  <script src="//unpkg.com/codemirror@5.57.0"></script>
+  <script src="//unpkg.com/codemirror@5.57.0"></script>
+  <script src="//unpkg.com/codemirror@5.57.0/mode/xml/xml.js"></script>
+  <!-- use local build for testing: -->
+  <script src="../dist/pica-editor.js"></script>
  </head>
  <body>
-  <header>
-    <h1>pica-editor demo</h1>
-  </header>
-  <div id="app"></div>
-  <footer style="text-align:right;">
-    <p>See <a href="https://github.com/gbv/pica-editor">git repository</a> for more information.</p>
-  </footer>
-  <script type="module" src="main.js"></script>
- </body>
+  <h1>pica-editor demo (UMD)</h1>
+  <p>
+    This example illustrates direct use of
+    <a href="https://github.com/gbv/pica-editor/">pica-editor</a> in the browser. 
+    It requires
+    <a href="https://codemirror.net/">codemirror</a> and 
+    <a href="https://v3.vuejs.org/">Vue.js 3</a>:
+  </p>
+  <pre class="html">
+  &lt;link rel="stylesheet" href="//unpkg.com/codemirror/lib/codemirror.css">
+  &lt;script src="https://unpkg.com/codemirror">&lt;/script>
+  
+  &lt;script src="https://unpkg.com/vue@next">&lt;/script></pre>
+  <p>
+    Then include the UMD release of
+    <a href="https://github.com/gbv/pica-editor/tree/master/dist/pica-editor.js">pica-editor library</a>:
+  </p>
+  <pre class="html">
+  &lt;script src="https://unpkg.com/pica-editor">&lt;/script></pre>
+  <p>
+    The library defines a custom HTML element <code>pica-editor</code>
+    to be used inside applications:
+  </p>
+<pre class="html">  &lt;div id="app">
+    ...
+    &lt;pica-editor>003@ $012345&lt;/pica-editor>
+    ...
+  &lt;/div></pre>
+  <p>
+    The custom HTML element needs to be registered as component for each Vue application:
+  </p>
+  <pre class="html">  &lt;script>
+    Vue.createApp({ components: { PicaEditor } }).mount("#app")
+  &lt;/script></pre>
+  <p>Result:</p>
+  <div id="app">
+    <pica-editor>003@ $012345</pica-editor>
+  </div>
+  <!-- TODO: add slightly more complex example with data binding -->
+  <p>
+    If you are going to build a more complex application, better
+    <a href="esm.html">use the ESM release of pica-editor</a>.
+  </p>
+</body>
+<script>
+// HTML syntax highlighting for code snippets
+Array.from(document.getElementsByClassName('html')).forEach(html => {
+  CodeMirror(function(e) { html.parentNode.replaceChild(e, html) },{
+    value: html.innerText,
+    mode: "xml",
+    htmlMode: true,
+    readOnly: true
+  })
+})
+</script>
+<script>
+Vue.createApp({ components: { PicaEditor } }).mount("#app")
+</script>
 </html>

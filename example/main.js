@@ -1,5 +1,9 @@
 // Load vue
+
+// vite-version (alternatively use <script type="module"
 import { createApp } from "vue"
+
+
 import App from "./App.vue"
 const app = createApp(App)
 
