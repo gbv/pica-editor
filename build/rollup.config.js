@@ -7,12 +7,14 @@ export default {
   input: "src/PicaEditor.vue",
   output: {
     name: "PicaEditor",
-    exports: "named",
+    format: "umd",
+    exports: "default",
     globals: {
       vue: "Vue",
       codemirror: "CodeMirror",
     },
   },
+  external: ["vue", "codemirror"],
   plugins: [
     commonjs(),
     vue({
@@ -20,6 +22,8 @@ export default {
       compileTemplate: true,
     }),
     css({ output: "dist/pica-editor.css" }),
-    babel(),
+    babel({
+      babelHelpers: "bundled",
+    }),
   ],
 }
