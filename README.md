@@ -49,13 +49,15 @@ use of the `<pica-editor>` element:
 
 ## Development
 
-Run a webservice with vite:
+All commits should be done to the `dev` branch or to feature branches. Merging into the `release` branch will automatically create a release at npmjs.
+
+During development run a webservice with vite:
 
 ~~~
 npm run dev
 ~~~
 
-Update distribution files in `dist/`:
+To update distribution files in `dist/`:
 
 ~~~
 npm run build
