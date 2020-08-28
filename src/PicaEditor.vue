@@ -2,7 +2,7 @@
   <form
     class="PicaEditor"
     @submit.prevent="loadRecord(inputPPN)">
-    <div class="panel">
+    <div class="PicaEditorPanel">
       <div
         v-if="unapi && dbkey"
         style="float: right">
@@ -35,7 +35,7 @@
     <textarea
       ref="editor"
       v-model="text" />
-    <div class="panel cm-s-default">
+    <div class="PicaEditorPanel cm-s-default">
       <code
         v-if="field"
         class="cm-variable-2">{{ field }}</code>
@@ -185,39 +185,39 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .PicaEditor {
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
 }
 
 
-.CodeMirror {
+.PicaEditor .CodeMirror {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   height: auto;
 }
 
-.panel {
+.PicaEditorPanel {
   background: #f7f7f7;
   padding: 3px 7px;
   height: 1.25em;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
 }
-.panel ul {
+.PicaEditorPanel ul {
   display: inline;
   list-style: none;
   padding: 0;
 }
-.panel li {
+.PicaEditorPanel li {
   display: inline;
   padding-right: 0.5em;
 }
-.panel a {
+.PicaEditorPanel a {
   text-decoration: none;
 }
-.panel a:hover {
+.PicaEditorPanel a:hover {
   text-decoration: underline;
 }
 </style>
