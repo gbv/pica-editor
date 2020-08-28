@@ -1,6 +1,7 @@
 # pica-editor
 
 ![Test and build](https://github.com/gbv/pica-editor/workflows/Test%20and%20build/badge.svg)
+![npm release](https://img.shields.io/npm/v/pica-editor)
 
 [PICA+] record display and editor as Vue3 component based on [codemirror].
 
