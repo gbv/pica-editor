@@ -21,7 +21,7 @@
           <a :href="picabase">{{ dbkey }}</a>
         </li>
         <li v-if="ppn">
-          <span style="font-variant:small-caps">ppn </span>
+          <label style="font-variant:small-caps">ppn </label>
           <a
             v-if="picabase"
             :href="picabase+'PPNSET?PPN='+ppn"
@@ -189,21 +189,30 @@ export default {
 .PicaEditor {
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
+  font-size: 1rem;
 }
-
-
 .PicaEditor .CodeMirror {
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
+  border: none; 
   height: auto;
+  padding: 3px;
 }
-
 .PicaEditorPanel {
   background: #f7f7f7;
   padding: 3px 7px;
   height: 1.25em;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
+  box-sizing: content-box;
+}
+.PicaEditorPanel label {
+  color: #666;
+}
+.PicaEditorPanel code {
+  font-family: monospace;
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+  color: #000;
 }
 .PicaEditorPanel ul {
   display: inline;
