@@ -1,5 +1,5 @@
 .idea
 .vscode
-dist/
+dist/*.map
 node_modules/
 coverage

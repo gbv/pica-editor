@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Vue component to display and edit PICA records",
   "main": "dist/pica-editor.js",
+  "unpkg": "dist/pica-editor.js",
   "module": "dist/pica-editor.esm.js",
   "browser": "src/PicaEditor.vue",
   "files": [
@@ -12,10 +13,10 @@
   "scripts": {
     "lint": "eslint --fix './{src,example,build}/**/*.{vue,js}'",
     "test": "rm -rf ./coverage && mocha --recursive",
+    "dev": "vite --config vite.config.cjs",
     "build": "npm run build:esm && npm run build:umd",
     "build:esm": "rollup --config ./build/rollup.config.js --format es --file dist/pica-editor.esm.js",
-    "build:umd": "rollup --config ./build/rollup.config.js --format umd --file dist/pica-editor.js",
-    "example": "vite --config vite.config.cjs"
+    "build:umd": "rollup --config ./build/rollup.config.js --format umd --file dist/pica-editor.js"
   },
   "repository": {
     "type": "git",

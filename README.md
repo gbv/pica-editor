@@ -9,17 +9,57 @@
 
 ## Usage
 
-This is work in progress. Use from repository:
+### Direct usage as UMD module in the browser
 
-~~
-npm i
-npm run build   # create dist/ files, not commited yet
-npm run example
-~~
+First include CodeMirror and Vue.js 3 libraries:
 
+~~~html
+<script src="https://unpkg.com/codemirror"></script>
+<script src="https://unpkg.com/vue@next"></script>
+~~~
 
-An example is made available at <http://localhost:3000/example/> and
-another at <http://localhost:3000/example/esm.html>
+Then include the pica-editor library and its CSS file. The latter contains CodeMirror CSS, so no additional stylesheets are needed:
+
+~~~html
+<script src="https://unpkg.com/pica-editor"></script>
+<link rel="stylesheet" href="https://unpkg.com/pica-editor/dist/pica-editor.css">
+~~~
+
+Finally create a Vue application that registers the `PicaEditor` component and make
+use of the `<pica-editor>` element:
+
+~~~html
+<div id="app">
+  ...
+  <pica-editor>003@ $012345</pica-editor>
+  ...
+</div>
+<script>
+  Vue.createApp({ components: { PicaEditor } }).mount("#app")
+</script>
+~~~
+
+### Usage as ES Module in web applications
+
+*...not documented yet...*
+
+### Configuration
+
+*...not documented yet...*
+
+## Development
+
+Run a webservice with vite:
+
+~~~
+npm run dev
+~~~
+
+Update distribution files in `dist/`:
+
+~~~
+npm run build
+~~~
 
 ## LICENSE
 

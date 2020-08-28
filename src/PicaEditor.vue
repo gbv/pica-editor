@@ -17,14 +17,18 @@
         </button>
       </div>
       <ul>
-        <li v-if="dbkey && picabase">
+        <li v-if="picabase && dbkey">
           <a :href="picabase">{{ dbkey }}</a>
         </li>
-        <li>
+        <li v-if="ppn">
+          <span style="font-variant:small-caps">ppn </span>
           <a
-            v-if="picabase && ppn"
+            v-if="picabase"
             :href="picabase+'PPNSET?PPN='+ppn"
             target="opac"><code>{{ ppn }}</code></a>
+          <span v-else>
+            <code>{{ ppn }}</code>
+          </span>
         </li>
       </ul>
     </div>
@@ -102,45 +106,44 @@ export default {
     }
   },
   created() {
-    // get record in PICA Plain from element content
-    const slot = this.$slots.default
-    this.setText(slot ? getTextChildren(slot()) : "")
-
     this.$watch("record", (record, oldRecord) => {
-      // TODO: skip if record equals oldRecord
+      // TODO: skip if record deep-equals oldRecord
       if (record === oldRecord) return
       this.ppn = getPPN(record) || this.ppn
       this.$emit("change", { record, ppn: this.ppn })
     })
+
+    // get record in PICA Plain from element content
+    const slot = this.$slots.default
+    this.setText(slot ? getTextChildren(slot()) : "")
   },
   mounted: function() {
     const options = {
+      mode: "pica",
       readOnly: !this.editable,
       styleActiveLine: true,
       lineWrapping: true,
     }
     this.editor = CodeMirror.fromTextArea(this.$refs.editor, options)
     this.editor.on("change", editor => this.setText(editor.getValue()))
-    this.editor.on("cursorActivity", () => {
-      const pica = this.picaAtCursor() || {}
-      this.field = pica.field
-      this.subfield = pica.subfield
-    })
+    const updateCursor = () => Object.assign(this, this.picaAtCursor())
+    this.editor.on("cursorActivity", updateCursor)
+    updateCursor()
   },
   methods: {
     picaAtCursor() {
       const { line, ch } = this.editor.getCursor()
       const tokens = this.editor.getLineTokens(line)
+      var field
+      var subfield
       if (tokens.length && tokens[0].type === "variable-2") {
-        var field = tokens[0].string
-        var subfield
+        field = tokens[0].string
         for(const tok of tokens) {
           if (tok.type === "keyword") subfield = tok.string
           if (tok.end>ch) break
         }
-        return { field, subfield }
       }
-      return 
+      return { field, subfield } 
     },
     setText(text) {
       this.text = text
@@ -184,8 +187,10 @@ export default {
 
 <style scoped>
 .PicaEditor {
-  border: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
 }
+
 
 .CodeMirror {
   border-top: 1px solid #ddd;
@@ -196,6 +201,9 @@ export default {
 .panel {
   background: #f7f7f7;
   padding: 3px 7px;
+  height: 1.25em;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
 }
 .panel ul {
   display: inline;
