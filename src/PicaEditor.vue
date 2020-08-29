@@ -2,7 +2,7 @@
   <form
     class="PicaEditor"
     @submit.prevent="loadRecord(inputPPN)">
-    <div class="PicaEditorPanel">
+    <div class="PicaEditorPanel top">
       <div
         v-if="unapi && dbkey"
         style="float: right">
@@ -35,14 +35,22 @@
     <textarea
       ref="editor"
       v-model="text" />
-    <div class="PicaEditorPanel cm-s-default">
-      <code
-        v-if="field"
-        class="cm-variable-2">{{ field }}</code>
-      <span v-if="subfield">
-        <code class="cm-comment">$</code>
-        <code class="cm-keyword">{{ subfield }}</code>
-      </span>
+    <div
+      v-if="avram"
+      class="PicaEditorPanel bottom cm-s-default">
+      <PicaFieldInfo
+        v-if="field && field in (avram.fields||{})"
+        :field="avram.fields[field]"
+        :subfield="subfield" />
+      <div v-else>
+        <code
+          v-if="field"
+          class="cm-variable-2">{{ field }}</code>
+        <span v-if="subfield">
+          <code class="cm-comment">$</code>
+          <code class="cm-keyword">{{ subfield }}</code>
+        </span>
+      </div>
     </div>
   </form>
 </template>
@@ -51,6 +59,7 @@
 import { serializePica, parsePica, getPPN, filterPicaFields } from "./pica.js"
 import CodeMirror from "codemirror"
 import "./codemirror-pica.js"
+import PicaFieldInfo from "./PicaFieldInfo.vue"
 
 // TODO: import from node_modules/codemirror
 import "./codemirror.min.css"
@@ -62,6 +71,7 @@ function getTextChildren(nodes) {
 
 // CodeMirror instance for PICA Plain records
 export default {
+  components: { PicaFieldInfo },
   props: {
     // unAPI base URL to load records from
     unapi: {
@@ -89,7 +99,7 @@ export default {
       default: true,
     },
     // Avram Schema
-    schema: {
+    avram: {
       type: Object,
       default: null,
     },
@@ -137,7 +147,7 @@ export default {
       var field
       var subfield
       if (tokens.length && tokens[0].type === "variable-2") {
-        field = tokens[0].string
+        field = tokens[0].string.replace(/^\s+/,"")
         for(const tok of tokens) {
           if (tok.type === "keyword") subfield = tok.string
           if (tok.end>ch) break
@@ -192,18 +202,24 @@ export default {
   font-size: 1rem;
 }
 .PicaEditor .CodeMirror {
-  border: none; 
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
   height: auto;
-  padding: 3px;
+  padding: 0.5em;
 }
 .PicaEditorPanel {
   background: #f7f7f7;
   padding: 3px 7px;
-  height: 1.25em;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
   box-sizing: content-box;
+  background: #f7f7f7;
 }
+.PicaEditorPanel.top {
+  border-top: 1px solid #ddd;
+  padding: 0.5em 0.7em;
+}    
+.PicaEditorPanel.bottom {
+  border-bottom: 1px solid #ddd;
+}    
 .PicaEditorPanel label {
   color: #666;
 }
