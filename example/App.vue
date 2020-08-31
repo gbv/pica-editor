@@ -5,7 +5,10 @@
       :unapi="unapi"
       :dbkey="dbkey"
       :picabase="picabase"
-      @change="recordChanged" />  
+      :avram="avram"
+      @change="recordChanged">
+      003@ $01
+    </PicaEditor>
     <div
       v-if="examples && examples.length"
       style="font-size: smaller; padding-top: 0.2em;">
@@ -34,8 +37,20 @@ const config = {
 
 export default {
   components: { PicaEditor },
-  data() { return {...config} },
+  data() {
+    return {
+      ...config,
+      avram: {},
+    } },
+  mounted() {
+    this.loadAvram("k10plus")
+  },
   methods: {
+    async loadAvram(profile) {
+      const avram = await (fetch("https://format.k10plus.de/avram.pl?profile="+profile)
+        .then(res => res.ok ? res.json() : {}))
+      this.avram = avram
+    },
     loadRecord(ppn) {
       // Use $nextTick to give dbkey the chance to propagate to PicaEditor
       this.$nextTick(() => {

@@ -1,6 +1,7 @@
 # pica-editor
 
 ![Test and build](https://github.com/gbv/pica-editor/workflows/Test%20and%20build/badge.svg)
+![npm release](https://img.shields.io/npm/v/pica-editor)
 
 [PICA+] record display and editor as Vue3 component based on [codemirror].
 
@@ -49,19 +50,19 @@ use of the `<pica-editor>` element:
 
 ## Development
 
-All commits should be done to the `dev` branch or to feature branches. Merging into the `release` branch will automatically create a release at npmjs.
-
 During development run a webservice with vite:
 
 ~~~
 npm run dev
 ~~~
 
-To update distribution files in `dist/`:
+To create distribution files in `dist/`:
 
 ~~~
 npm run build
 ~~~
+
+All commits should be done to the `dev` branch or to feature branches. For releases run `npm run release minor` or `npm run release patch`, this automatically tags and merges into the `release` branch and pushes to GitHub where the release is published at <https://www.npmjs.com/package/pica-editor> and as GitHub release.
 
 ## LICENSE
 
