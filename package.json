@@ -16,7 +16,11 @@
     "dev": "vite --config vite.config.cjs",
     "build": "npm run build:esm && npm run build:umd",
     "build:esm": "rollup --config ./build/rollup.config.js --format es --file dist/pica-editor.esm.js",
-    "build:umd": "rollup --config ./build/rollup.config.js --format umd --file dist/pica-editor.js"
+    "build:umd": "rollup --config ./build/rollup.config.js --format umd --file dist/pica-editor.js",
+    "release": "npm run build && npm test && ./build/release.sh $SEMVER",
+    "release:patch": "SEMVER=patch npm run release",
+    "release:minor": "SEMVER=minor npm run release",
+    "release:major": "SEMVER=major npm run release"
   },
   "repository": {
     "type": "git",
