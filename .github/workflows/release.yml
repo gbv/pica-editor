@@ -1,12 +1,14 @@
+# This workflow will release a package at npmjs and at GitHub releases
+
 name: Release
 
 on:
-  create:
-    branches:
-    - release
+  push:
+    tags:
+      - v*
 
 jobs:
-  publish:
+  npm:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -16,7 +18,33 @@ jobs:
         registry-url: https://registry.npmjs.org/
     - run: npm ci
     - run: npm run build
-    # build should result in identical files in dist/ 
-    - run: git diff --exit-code && npm publish
+    - run: npm npm publish --access=public
       env:
         NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+  github:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: npm pack
+    - run: |
+        ARTIFACT_NAME=$(ls pica-editor-0.1.0.tgz)
+        ARTIFACT_PATH=./$ARTIFACT_NAME
+        RELEASE_MESSAGE=$(git log -1 --pretty=%B)
+    - id: create_release
+      uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: ${{ env.RELEASE_MESSAGE }}
+          draft: false
+          prerelease: false
+    - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.ARTIFACT_PATH }}
+          asset_name: ${{ env.ARTIFACT_NAME }}
+          asset_content_type: application/gzip
