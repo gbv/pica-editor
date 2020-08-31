@@ -1,7 +1,7 @@
 <template>
   <form
     class="PicaEditor"
-    @submit.prevent="loadRecord(inputPPN)">
+    @submit.prevent="loadRecord(inputPPN.trim())">
     <div class="PicaEditorPanel top">
       <div
         v-if="unapi && dbkey"
@@ -57,13 +57,16 @@
 
 <script>
 import { serializePica, parsePica, getPPN, filterPicaFields } from "./pica.js"
-import CodeMirror from "codemirror"
-import "./codemirror-pica.js"
 import PicaFieldInfo from "./PicaFieldInfo.vue"
+import CodeMirror from "codemirror"
+
+import "./codemirror-pica.js"
 
 // TODO: import from node_modules/codemirror
 import "./codemirror.min.css"
 import "./addon/active-line.js"
+
+import { picaAtCursor, moveCursorNext } from "./PicaMirror.js"
 
 function getTextChildren(nodes) {
   return nodes.map(node => typeof node.children === "string" ? node.children : "").join("")
@@ -133,28 +136,19 @@ export default {
       readOnly: !this.editable,
       styleActiveLine: true,
       lineWrapping: true,
+      extraKeys: {
+        Tab: moveCursorNext,
+      },
     }
+    this.$refs.editor.value = this.$refs.editor.value.trim()
     this.editor = CodeMirror.fromTextArea(this.$refs.editor, options)
     this.editor.on("change", editor => this.setText(editor.getValue()))
-    const updateCursor = () => Object.assign(this, this.picaAtCursor())
+    const updateCursor = () => Object.assign(this, this.picaAtCursor(this.editor))
     this.editor.on("cursorActivity", updateCursor)
     updateCursor()
   },
   methods: {
-    picaAtCursor() {
-      const { line, ch } = this.editor.getCursor()
-      const tokens = this.editor.getLineTokens(line)
-      var field
-      var subfield
-      if (tokens.length && tokens[0].type === "variable-2") {
-        field = tokens[0].string.replace(/^\s+/,"")
-        for(const tok of tokens) {
-          if (tok.type === "keyword") subfield = tok.string
-          if (tok.end>ch) break
-        }
-      }
-      return { field, subfield } 
-    },
+    picaAtCursor,
     setText(text) {
       this.text = text
       this.record = parsePica(text)

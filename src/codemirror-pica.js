@@ -25,7 +25,6 @@ CodeMirror.defineMode("pica", () => {
 
       if (stream.sol()) {
         Object.assign(state, startState())
-        stream.eatSpace()
       }
 
       if (state.next === "field") {
