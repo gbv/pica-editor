@@ -1,8 +1,6 @@
 <template>
-  <table
-    v-if="field"
-    class="PicaFieldInfo">
-    <tr>
+  <table class="PicaFieldInfo">
+    <tr v-if="field">
       <td style="text-align:right">
         <code class="cm-variable-2">
           <span>{{ field.tag }}</span>
@@ -24,7 +22,10 @@
         </span>
       </td>
     </tr>
-    <tr v-if="field.subfields && subfield">
+    <tr v-else>
+      <td>&nbsp;</td>
+    </tr>
+    <tr v-if="subfield">
       <td style="text-align:right">
         <code class="cm-comment">&nbsp;&nbsp;$</code>
         <code class="cm-keyword">{{ subfield }}</code>
@@ -32,17 +33,19 @@
       <td>
         <code v-if="sf && sf.pica3">{{ sf.pica3 }}</code>
       </td>
-      <td>
+      <td v-if="!sf">
+        ❓
+      </td>
+      <td v-else>
         <a
           v-if="sf && sf.url"
           :href="sf.url">&#9432;</a>
-        <span v-else-if="!sf">❓</span>
       </td>
       <td v-if="sf">
         {{ sf.label }}
       </td>
     </tr>
-    <tr v-else-if="field.subfields">
+    <tr v-else>
       <td>&nbsp;</td>
     </tr>
   </table>
@@ -64,7 +67,7 @@ export default {
   },
   computed: {
     sf() { 
-      return (this.subfields||{})[this.subfield]
+      return ((this.field||{}).subfields||{})[this.subfield]
     },
   },
 }
