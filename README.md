@@ -12,14 +12,15 @@
 
 ### Direct usage as UMD module in the browser
 
-First include CodeMirror and Vue.js 3 libraries:
+First include Vue.js 3 and CodeMirror libraries and CodeMirror CSS:
 
 ~~~html
-<script src="https://unpkg.com/codemirror"></script>
 <script src="https://unpkg.com/vue@next"></script>
+<script src="https://unpkg.com/codemirror"></script>
+<link rel="stylesheet" href="https://unpkg.com/codemirror/lib/codemirror.css">
 ~~~
 
-Then include the pica-editor library and its CSS file. The latter contains CodeMirror CSS, so no additional stylesheets are needed:
+Then include the pica-editor library and its CSS file.
 
 ~~~html
 <script src="https://unpkg.com/pica-editor"></script>
@@ -36,7 +37,10 @@ use of the `<pica-editor>` element:
   ...
 </div>
 <script>
-  Vue.createApp({ components: { PicaEditor } }).mount("#app")
+  Vue.createApp({
+    components: { PicaEditor }
+    // ...possibly extend your Vue app
+  }).mount("#app")
 </script>
 ~~~
 
