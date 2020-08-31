@@ -18,7 +18,7 @@ jobs:
         registry-url: https://registry.npmjs.org/
     - run: npm ci
     - run: npm run build
-    - run: npm npm publish --access=public
+    - run: npm run publish --access=public
       env:
         NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   github:
@@ -27,7 +27,7 @@ jobs:
     - uses: actions/checkout@v2
     - run: npm pack
     - run: |
-        ARTIFACT_NAME=$(ls pica-editor-0.1.0.tgz)
+        ARTIFACT_NAME=$(ls pica-editor-*.tgz)
         ARTIFACT_PATH=./$ARTIFACT_NAME
         RELEASE_MESSAGE=$(git log -1 --pretty=%B)
     - id: create_release
