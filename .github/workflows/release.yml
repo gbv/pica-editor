@@ -32,19 +32,19 @@ jobs:
         RELEASE_MESSAGE=$(git log -1 --pretty=%B)
     - id: create_release
       uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: ${{ env.RELEASE_MESSAGE }}
-          draft: false
-          prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: ${{ env.RELEASE_MESSAGE }}
+        draft: false
+        prerelease: false
     - uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.ARTIFACT_PATH }}
-          asset_name: ${{ env.ARTIFACT_NAME }}
-          asset_content_type: application/gzip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ env.ARTIFACT_PATH }}
+        asset_name: ${{ env.ARTIFACT_NAME }}
+        asset_content_type: application/gzip
