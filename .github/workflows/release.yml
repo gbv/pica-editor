@@ -26,10 +26,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: npm pack
-    - run: |
-        ARTIFACT_NAME=$(ls pica-editor-*.tgz)
-        ARTIFACT_PATH=./$ARTIFACT_NAME
-        RELEASE_MESSAGE=$(git log -1 --pretty=%B)
+    - name: set release name, artifact, and message
+      run: |
+        echo "::set-env ARTIFACT_NAME=$(ls pica-editor-*.tgz)"
+        echo "::set-env ARTIFACT_PATH=./$ARTIFACT_NAME"
+        echo "::set-env RELEASE_MESSAGE=$(git log -1 --pretty=%B)"
     - id: create_release
       uses: actions/create-release@v1
       env:
