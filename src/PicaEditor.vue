@@ -39,8 +39,8 @@
       v-if="avram"
       class="PicaEditorPanel bottom cm-s-default">
       <PicaFieldInfo
-        v-if="field && field in (avram.fields||{})"
-        :field="avram.fields[field]"
+        v-if="fieldSchedule"
+        :field="fieldSchedule"
         :subfield="subfield" />
       <div v-else>
         <code
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { serializePica, parsePica, getPPN, filterPicaFields } from "./pica.js"
+import { serializePica, parsePica, getPPN, filterPicaFields, picaFieldSchedule } from "./pica.js"
 import PicaFieldInfo from "./PicaFieldInfo.vue"
 import CodeMirror from "codemirror"
 
@@ -117,6 +117,11 @@ export default {
       field: null,      // field identifier at cursor
       subfield: null,   // subfield code at cursor
     }
+  },
+  computed: {
+    fieldSchedule() {
+      return picaFieldSchedule(this.avram, this.field)
+    },
   },
   created() {
     this.$watch("record", (record, oldRecord) => {

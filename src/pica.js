@@ -119,13 +119,24 @@ export const filterPicaFields = (pica, exprs) => {
 const PPN = new PicaPath("003@$0")
 export const getPPN = record => PPN.getValues(record)[0]
 
+// TODO: move to avram-js module
 export const picaFieldSchedule = (schema, field) => {
-  const id = picaFieldIdentifier(field[0].charAt(0) === "2" ? [field[0],null] : field)
+  if (!schema || !field) return
   const fields = schema.fields || {}
 
-  if (id in fields) return fields[id]
+  var [tag, occ] = Array.isArray(field) ? field : field.split("/")
+  if (tag && tag.charAt(0) === "2") occ = null
     
-  if (field[1]) {
-    // TODO: occurrence may be in a range
+  var id = picaFieldIdentifier([tag, occ])
+
+  if (!(id in fields) && occ) {
+    // occurrence may be in a range
+    occ = Number(occ)
+    id = Object.keys(fields).find(key => {
+      const [t, from, to] = key.split(/[/-]/)
+      return t === tag && to && occ <= Number(to) && occ >= Number(from)
+    })
   }
+
+  return fields[id]
 }

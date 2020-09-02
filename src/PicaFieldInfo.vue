@@ -13,6 +13,7 @@
       <td>
         <a
           v-if="field.url"
+          target="help"
           :href="field.url">&#9432;</a>
       </td>
       <td>{{ field.label }}</td>
@@ -39,6 +40,7 @@
       <td v-else>
         <a
           v-if="sf && sf.url"
+          target="help"
           :href="sf.url">&#9432;</a>
       </td>
       <td v-if="sf">
@@ -55,8 +57,17 @@
           :key="code"
           style="padding-right: 0.3em;"
           :title="about.label">
-          <code class="cm-comment">$</code>
-          <code class="cm-keyword">{{ code }}</code>
+          <a
+            v-if="about.url"
+            target="help"
+            :href="about.url">
+            <code class="cm-comment">$</code>
+            <code class="cm-keyword">{{ code }}</code>
+          </a>
+          <span v-else>
+            <code class="cm-comment">$</code>
+            <code class="cm-keyword">{{ code }}</code>
+          </span>
         </span>
       </td>
     </tr>

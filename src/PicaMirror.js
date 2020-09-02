@@ -6,7 +6,6 @@ import { picaFieldSchedule } from "./pica.js"
 export function subfieldHint(editor, field, avram, current) {
   if (!field[0] || !avram) return
   const { subfields } = picaFieldSchedule(avram, field) || {}
-  console.log(subfields)
   if (!subfields) return
 
   editor.showHint({
