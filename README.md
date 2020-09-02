@@ -12,6 +12,8 @@
 
 ## Usage
 
+Try online at <https://pro4bib.github.io/pica/#/verarbeitung?id=picaeditor>.
+
 ### Direct usage as UMD module in the browser
 
 First include Vue.js 3 and CodeMirror libraries and CodeMirror CSS:
