@@ -24,7 +24,7 @@ export default {
     css({
       output: (_, styles) => {
         if (!fs.existsSync("dist")) fs.mkdirSync("dist")
-        fs.writeFileSync("dist/pica-editor.css", Object.values(styles).filter(css => !css.match(/^\.CodeMirror/)).join("\n"))
+        fs.writeFileSync("dist/pica-editor.css", Object.values(styles).filter(css => !css.match(/^\.CodeMirror{/)).join("\n"))
       },
     }),
     babel({
