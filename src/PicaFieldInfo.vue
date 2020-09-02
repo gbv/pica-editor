@@ -46,7 +46,17 @@
       </td>
     </tr>
     <tr v-else>
-      <td>&nbsp;</td>
+      <td colspan="3">
+&nbsp;
+      </td>
+      <td v-if="field.subfields">
+        <span
+          v-for="code in Object.keys(field.subfields)"
+          style="padding-right: 0.3em;">
+          <code class="cm-comment">$</code>
+          <code class="cm-keyword">{{ code }}</code>
+        </span>
+      </td>
     </tr>
   </table>
 </template>
