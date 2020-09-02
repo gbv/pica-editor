@@ -17,16 +17,18 @@ export const serializePica = pica =>
 
 const picaSubfieldPattern = /\$([A-Za-z0-9])((?:[^$]+|\$\$)+)/g
 const picaLinePattern = new RegExp([
-  /^(?<tag>[012][0-9][0-9][A-Z@])/,
-  /(\/(?<occurrence>[0-9]{2,3}))?/,
+  /^([012][0-9][0-9][A-Z@])/,
+  /(\/([0-9]{2,3}))?/,
   /\s*/,
-  /(?<subfields>(\$([A-Za-z0-9])([^$]|\$\$)+)+)$/,
+  /((\$([A-Za-z0-9])([^$]|\$\$)+)+)$/,
 ].map(r => r.source).join(""))
 
 export const parsePica = text => text.split(/\n/).map(line => {
   const match = line.match(picaLinePattern)
   if (match) {
-    const { tag, occurrence, subfields } = match.groups
+    const tag = match[1]
+    const occurrence = match[3]
+    const subfields = match[4]
     const field = [ tag, occurrence ]
     for (let m of subfields.matchAll(picaSubfieldPattern)) {
       field.push(m[1], m[2].replace(/\$\$/g, "$"))
