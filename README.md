@@ -8,6 +8,8 @@
 [codemirror]:https://codemirror.net/
 [PICA+]: https://format.gbv.de/pica/plus
 
+![Screenshot](docs/pica-editor-screenshot.png)
+
 ## Usage
 
 ### Direct usage as UMD module in the browser
