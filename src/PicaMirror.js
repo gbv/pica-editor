@@ -1,6 +1,35 @@
 import "./codemirror-pica.js"
+import "./addon/show-hint.js"
+import "./addon/show-hint.css"
+import { picaFieldSchedule } from "./pica.js"
 
-export function moveCursorNext(editor) {
+export function subfieldHint(editor, field, avram, current) {
+  if (!field[0] || !avram) return
+  const { subfields } = picaFieldSchedule(avram, field) || {}
+  console.log(subfields)
+  if (!subfields) return
+
+  editor.showHint({
+    hint: (editor) => {
+      const { line, ch } = editor.getCursor()
+
+      // just list all subfields. TODO: filter subfields
+      const codes = Object.keys(subfields).sort()
+      const list = codes.map(text => {
+        return { text, displayText: text + " " + subfields[text].label }
+      })
+
+      const from = { line, ch }
+      const to = { line, ch: ch+1 }
+        
+      const selectedHint = codes.findIndex(c => c === current)
+      return selectedHint >= 0 ?{list, from, to, selectedHint}  : {list, from, to}      
+    },
+  })
+}
+
+// called when TAB is pressed
+export function moveCursorNext(editor, avram) {
   const { line, ch } = editor.getCursor()
   const tokens = editor.getLineTokens(line)
 
@@ -11,12 +40,28 @@ export function moveCursorNext(editor) {
   } else {
     const { type, end } = tokens[i]
     const last = i == tokens.length-1
-    if (type === "variable-2" && last) {            // only field on the line
+
+    // parse current line to PICA/JSON field
+    const field = [null, null]
+    if (tokens[0].type === "variable-2") {
+      field[0] = tokens[0].string.split("/")[0] // tag
+      field[1] = tokens[0].string.split("/")[1] // occ
+    }
+    for(let j=1; j<i; j++) {
+      if (tokens[j].type === "keyword") {
+        field.push(tokens[j].string)
+        if (j<i) field.push(tokens[j+1].string)
+      }
+    }
+
+    if (type === "variable-2" && last) {            // field without subfields
       editor.getDoc().replaceRange(" $",{line, end})
-      // TODO: suggestSubfield
+      subfieldHint(editor, field, avram)
     } else if (type === "comment" && ch == end) {   // cursor after '$'
-      // TODO: suggestSubfield
-      if (!last) {
+      if (field) {
+        const current = !last && tokens[i+1].type==="keyword" ? tokens[i+1].string : null
+        subfieldHint(editor, field, avram, current)
+      } else if (!last) {
         editor.setCursor(line, tokens[i+1].end)
       }
     } else if (last && ch >= end) {                 // end of line
@@ -37,6 +82,7 @@ export function moveCursorNext(editor) {
   }
 }
 
+// get field identifier and subfield code at the cursor
 export function picaAtCursor(editor) {
   const { line, ch } = editor.getCursor()
   const tokens = editor.getLineTokens(line)

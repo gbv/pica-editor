@@ -118,3 +118,14 @@ export const filterPicaFields = (pica, exprs) => {
 // get PPN of a record
 const PPN = new PicaPath("003@$0")
 export const getPPN = record => PPN.getValues(record)[0]
+
+export const picaFieldSchedule = (schema, field) => {
+  const id = picaFieldIdentifier(field[0].charAt(0) === "2" ? [field[0],null] : field)
+  const fields = schema.fields || {}
+
+  if (id in fields) return fields[id]
+    
+  if (field[1]) {
+    // TODO: occurrence may be in a range
+  }
+}

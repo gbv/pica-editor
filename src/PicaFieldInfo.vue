@@ -51,8 +51,10 @@
       </td>
       <td v-if="field.subfields">
         <span
-          v-for="code in Object.keys(field.subfields)"
-          style="padding-right: 0.3em;">
+          v-for="(about, code) in field.subfields"
+          :key="code"
+          style="padding-right: 0.3em;"
+          :title="about.label">
           <code class="cm-comment">$</code>
           <code class="cm-keyword">{{ code }}</code>
         </span>

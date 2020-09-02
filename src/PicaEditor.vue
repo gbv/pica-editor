@@ -137,7 +137,7 @@ export default {
       styleActiveLine: true,
       lineWrapping: true,
       extraKeys: {
-        Tab: moveCursorNext,
+        Tab: e => moveCursorNext(e, this.avram),
       },
     }
     this.$refs.editor.value = this.$refs.editor.value.trim()
@@ -201,11 +201,15 @@ export default {
   height: auto;
   padding: 0.5em;
 }
+.PicaEditor .CodeMirror-scroll {
+  max-height: 40em;
+}
 .PicaEditorPanel {
   background: #f7f7f7;
   padding: 3px 7px;
   box-sizing: content-box;
   background: #f7f7f7;
+  overflow: hidden;
 }
 .PicaEditorPanel.top {
   border-top: 1px solid #ddd;
