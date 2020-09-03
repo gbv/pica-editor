@@ -12,9 +12,11 @@
 
 ## Usage
 
-Try online at <https://pro4bib.github.io/pica/#/verarbeitung?id=picaeditor>.
+Try online at <https://gbv.github.io/pica-editor/>.
 
-### Direct usage as UMD module in the browser
+## Installation
+
+### Direct use as UMD module in the browser
 
 First include Vue.js 3 and CodeMirror libraries and CodeMirror CSS:
 
@@ -31,13 +33,14 @@ Then include the pica-editor library and its CSS file.
 <link rel="stylesheet" href="https://unpkg.com/pica-editor/dist/pica-editor.css">
 ~~~
 
-Finally create a Vue application that registers the `PicaEditor` component and make
-use of the `<pica-editor>` element:
+Finally create a Vue application that registers the `PicaEditor` component and make use of the `<pica-editor>` element:
 
 ~~~html
 <div id="app">
   ...
-  <pica-editor>003@ $012345</pica-editor>
+  <pica-editor>
+    <pre>003@ $012345</pre>
+  </pica-editor>
   ...
 </div>
 <script>
@@ -48,13 +51,22 @@ use of the `<pica-editor>` element:
 </script>
 ~~~
 
-### Usage as ES Module in web applications
+### Use as ES Module in web applications
 
 *...not documented yet...*
 
 ### Configuration
 
-*...not documented yet...*
+Editor instances can be configured with:
+
+* picabase
+* unAPI
+* dbkey
+* fields
+* avram
+* editable
+
+See [source code](https://github.com/gbv/pica-editor/blob/dev/src/PicaEditor.vue) for details and examples at <https://gbv.github.io/pica-editor/#examples> for different configurations in practice.
 
 ## Development
 
