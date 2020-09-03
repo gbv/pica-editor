@@ -53,18 +53,19 @@ Finally create a Vue application that registers the `PicaEditor` component and m
 
 ### Use as ES Module in web applications
 
-*...not documented yet...*
+Not documented yet. The `example/*` subfolder contains project files to possibly learn from.
 
 ### Configuration
 
 Editor instances can be configured with:
 
-* picabase
-* unAPI
-* dbkey
-* fields
-* avram
-* editable
+* `picabase`
+* `unAPI`
+* `dbkey`
+* `fields`
+* `avram`
+* `editable`
+* `@change`
 
 See [source code](https://github.com/gbv/pica-editor/blob/dev/src/PicaEditor.vue) for details and examples at <https://gbv.github.io/pica-editor/#examples> for different configurations in practice.
 
