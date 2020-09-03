@@ -1,0 +1,23 @@
+pre { padding: 4px; }
+.CodeMirror { height: auto; }
+body, h1, h2, h3 { font-family: sans-serif; }
+a { text-decoration: none; }
+a:hover { text-decoration: underline; }
+a, a:visited, a:hover { color: #0366d6; }
+
+.example {
+  border: 1px solid #ddd;
+  padding: 0.5em;
+  margin: 2em 1em;
+  box-shadow: 5px 5px 3px 0px #666;
+}
+
+kbd {
+  padding: 0.2em 0.7em;
+  border-radius: 3px;
+  border: 1px solid rgb(204, 204, 204);
+  box-shadow: 0px 1px 0px rgba(0,0,0,0.2), inset 0px 0px 0px 2px #ffffff;
+  background-color: rgb(247, 247, 247);
+}
+
+.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}

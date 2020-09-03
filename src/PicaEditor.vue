@@ -207,7 +207,7 @@ export default {
   padding: 0.5em;
 }
 .PicaEditor .CodeMirror-scroll {
-  max-height: 40em;
+  max-height: 36em;
 }
 .PicaEditorPanel {
   background: #f7f7f7;

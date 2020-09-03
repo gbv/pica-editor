@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8">
+  <title>PicaEditor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://unpkg.com/codemirror/lib/codemirror.css">
+  <link rel="stylesheet" href="https://unpkg.com/pica-editor/dist/pica-editor.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="//unpkg.com/vue@3.0.0-rc.8"></script>
+  <script src="//unpkg.com/codemirror"></script>
+  <script src="//unpkg.com/codemirror/mode/xml/xml.js"></script>
+  <script src="https://unpkg.com/pica-editor"></script>
+ </head>
+ <body>
+   <a href="https://github.com/gbv/pica-editor" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+  <h1>PicaEditor</h1>
+  <p>
+    <b>PicaEditor</b> is a web component to inspect and edit <a href="">PICA+ records</a>. It is based on <a href="https://v3.vuejs.org/">Vue.js 3</a> and <a href="https://codemirror.net/">CodeMirror</a>. Features include:
+    <ul>
+      <li>syntax highlighting</li>
+      <li>load records via unAPI</li>
+      <li>quick keyboard navigation (hit <kbd>↹ Tab</kbd> to jump through subfields)</li>
+      <li>document selected (sub)fields<sup>*</sup></li>
+      <li>autocomplete (hit <kbd>↹ Tab</kbd> after the subfield indicator <code style="color: #a50;">$</code>) for define fields and subfields<sup>*</sup></li>
+    </ul>
+    <sup>*</sup> based on <a href="https://format.gbv.de/schema/avram/specification">Avram</a> schemas
+  </p>
+  <p>
+    Feature requests and bug reports
+    <a href="https://github.com/gbv/pica-editor/issues">are welcome</a> (in English or German)!
+  </p>
+  <h2>Usage</h2>
+  <p>
+    See <a href="https://github.com/gbv/pica-editor#pica-editor">README</a>
+    for detailed instructions and documentation.
+  </p>
+  <div id="app">
+    <h2>Demo</h2>
+<pica-editor :dbkey="'opac-de-627'"
+             :picabase="'https://opac.k10plus.de/'"
+             :unapi="'https://unapi.k10plus.de/'"
+             :avram="avram">
+  <pre>
+003@ $0355973081
+010@ $ager
+011@ $a2001
+019@ $aXA-DE
+021A $a@Zehn Jahre Pica in Niedersachsen und Deutschland$dSkizzen eines Erfolgs aus Anlass der 5. Verbundkonferenz des Gemeinsamen Bibliotheksverbundes der Länder Bremen, Hamburg, Mecklenburg-Vorpommern, Niedersachsen, Sachsen-Anhalt, Schleswig-Holstein und Thüringen, vom 11.-12. September, 2001 in Göttingen$h[Redaktion, Elmar Mittler]
+029A $a@Gemeinsamer Bibliotheksverbund der Länder Bremen, Hamburg, Mecklenburg-Vorpommern, Niedersachsen, Sachsen-Anhalt, Schleswig-Holstein und Thüringen$bVerbundkonferenz$xGöttingen, Germany)
+029F $a@Niedersächsische Staats- und Universitätsbibliothek Göttingen
+033A $pGöttingen$nNiedersächsische Staats- und Universitätsbibliothek
+034D $a181 p
+034I $a21 cm
+034M $aill
+041A/01 $9181564734$VTsv1$7gnd/4366157-9$3211683000$aPICA$gBibliotheksinformationssystem
+044A $aPICA Project$aCongresses
+045A $aZ699.4.P23
+045V $a10$a24,2
+  </pre>
+</pica-editor>
+    <p>
+      If you don't see a nice editor, either your browser is too old or
+      there is a bug. Sorry!
+    </p>
+    
+    <h2>Examples</h2>
+    <div class="example" title="Minimal usage">
+<pica-editor>
+  <pre>003@ $0355973081</pre>
+</pica-editor>
+    </div>
+    <div class="example" title="Add picabase to make PPN clickable">
+<pica-editor :picabase="'http://opac.k10plus.de/'">
+  <pre>003@ $0355973081</pre>
+</pica-editor>
+    </div>
+    <div class="example" title="Add unapi and dbkey to enable record loading">
+<pica-editor :picabase="'http://opac.k10plus.de/'"
+             :dbkey="'opac-de-627'" 
+             :unapi="'https://unapi.k10plus.de/'">
+  <pre>003@ $0355973081</pre>
+</pica-editor>
+    </div>
+  </div>
+</body>
+<script src="examples.js"></script>
+<script>
+Vue.createApp({
+  components: { PicaEditor },
+  data: () => {
+    return { avram: {} }
+  },
+  mounted() {
+    this.loadAvram("k10plus")
+  },
+  methods: {
+    async loadAvram(profile) {
+      const avram = await (fetch("https://format.k10plus.de/avram.pl?profile="+profile)
+        .then(res => res.ok ? res.json() : {}))
+      this.avram = avram
+    }
+  }
+}).mount("#app")
+</script>
+</html>
