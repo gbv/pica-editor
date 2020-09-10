@@ -59,15 +59,18 @@ Not documented yet. The `example/*` subfolder contains project files to possibly
 
 Editor instances can be configured with:
 
-* `picabase`
-* `unAPI`
-* `dbkey`
-* `fields`
-* `avram`
-* `editable`
-* `@change`
+|prop|type|description|
+|----|----|-----------|
+| unAPI | String | unAPI base URL to load records from |
+| dbkey | String | database key to load records from via unAPI |
+| picabase | String | base URL of catalog to link into |
+| editable | Boolean | whether PICA record can be edited |
+| avram | Object | Avram Schema with definition of fields and subfields |
 
-See [source code](https://github.com/gbv/pica-editor/blob/dev/src/PicaEditor.vue) for details and examples at <https://gbv.github.io/pica-editor/#examples> for different configurations in practice.
+The component emits two events:
+
+* `update:record` when the parsed PICA record has been changed
+* `update:ppn` when the PPN has been changed
 
 ## Development
 

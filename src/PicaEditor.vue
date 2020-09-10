@@ -107,7 +107,7 @@ export default {
       default: null,
     },
   },
-  emits: ["change"],
+  emits: ["update:record", "update:ppn"],
   data: function() {
     return {
       text: "",         // record in PICA Plain
@@ -127,8 +127,13 @@ export default {
     this.$watch("record", (record, oldRecord) => {
       // TODO: skip if record deep-equals oldRecord
       if (record === oldRecord) return
-      this.ppn = getPPN(record) || this.ppn
-      this.$emit("change", { record, ppn: this.ppn })
+      this.$emit("update:record", record)
+
+      const ppn = getPPN(record)
+      if (ppn && ppn !== this.ppn) {
+        this.ppn = ppn
+        this.$emit("update:ppn", ppn)
+      }
     })
 
     // get record in PICA Plain from element content

@@ -6,7 +6,8 @@
       :dbkey="dbkey"
       :picabase="picabase"
       :avram="avram"
-      @change="recordChanged">
+      @update:record="updateRecord"
+      @update:ppn="updatePPN">
       <pre>
 003@ $0355973081
 010@ $ager
@@ -72,8 +73,11 @@ export default {
         this.$refs.editor.loadRecord(ppn)
       })
     },
-    recordChanged() {
-      console.log("recordChanged")
+    updateRecord(record) {
+      console.log(JSON.stringify(record))
+    },
+    updatePPN(ppn) {
+      console.log(ppn)
     },
   },
 }
