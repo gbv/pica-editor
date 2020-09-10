@@ -124,16 +124,20 @@ export default {
     },
   },
   created() {
-    this.$watch("record", (record, oldRecord) => {
-      // TODO: skip if record deep-equals oldRecord
-      if (record === oldRecord) return
+    this.$watch("record", (record, old) => {
+      if (record === old || JSON.stringify(record) === JSON.stringify(old)) return
       this.$emit("update:record", record)
 
       const ppn = getPPN(record)
       if (ppn && ppn !== this.ppn) {
         this.ppn = ppn
-        this.$emit("update:ppn", ppn)
       }
+    })
+
+    this.$watch("ppn", (ppn, old) => {
+      if (ppn === old) return
+      this.$emit("update:ppn", ppn)
+      if (!this.inputPPN) this.inputPPN = ppn
     })
 
     // get record in PICA Plain from element content
