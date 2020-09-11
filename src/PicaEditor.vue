@@ -36,21 +36,11 @@
       ref="editor"
       v-model="text" />
     <div
-      v-if="avram"
+      v-if="avram && field"
       class="PicaEditorPanel bottom cm-s-default">
       <PicaFieldInfo
-        v-if="fieldSchedule"
-        :field="fieldSchedule"
+        :field="fieldSchedule || {unknown: field}"
         :subfield="subfield" />
-      <div v-else>
-        <code
-          v-if="field"
-          class="cm-variable-2">{{ field }}</code>
-        <span v-if="subfield">
-          <code class="cm-comment">$</code>
-          <code class="cm-keyword">{{ subfield }}</code>
-        </span>
-      </div>
     </div>
   </form>
 </template>
