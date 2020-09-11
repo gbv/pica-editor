@@ -46,14 +46,50 @@ Finally create a Vue application that registers the `PicaEditor` component and m
 <script>
   Vue.createApp({
     components: { PicaEditor }
-    // ...possibly extend your Vue app
+    // ...extend your Vue app
   }).mount("#app")
 </script>
 ~~~
 
-### Use as ES Module in web applications
+### Use as ES Module in Vue web applications
 
-Not documented yet. The `example/*` subfolder contains project files to possibly learn from.
+We recommend to build your application with [vite](https://github.com/vitejs/vite) so Vue modules can be used as single file components (`.vue` files). In you HTML page:
+
+~~~html
+<div id="app"></div>
+<script type="module" src="main.js"></script>
+~~~
+
+In a JavaScript module `main.js`:
+
+~~~js
+import { createApp } from "vue"
+import App from "./App.vue"
+
+const app = createApp(App)
+app.mount("#app")
+~~~
+
+In your Vue application:
+
+~~~html
+<template>
+  <div>
+    <pica-editor>
+      <pre>003@ $012345</pre>
+    </pica-editor>
+  </div>
+</template>
+
+<script>
+import PicaEditor from "pica-editor"
+
+export default {
+  components: { PicaEditor }
+  // ...extend your Vue app
+}
+</script>
+~~~
 
 ### Configuration
 
