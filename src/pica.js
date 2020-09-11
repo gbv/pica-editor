@@ -23,7 +23,7 @@ const picaLinePattern = new RegExp([
   /((\$([A-Za-z0-9])([^$]|\$\$)+)+)$/,
 ].map(r => r.source).join(""))
 
-export const parsePica = text => text.split(/\n/).map(line => {
+export const parsePicaLine = line => {
   const match = line.match(picaLinePattern)
   if (match) {
     const tag = match[1]
@@ -35,8 +35,9 @@ export const parsePica = text => text.split(/\n/).map(line => {
     }
     return field
   }
-}).filter(Boolean)
+}
 
+export const parsePica = text => text.split(/\n/).map(parsePicaLine).filter(Boolean)
 
 // PICA path expression
 export class PicaPath {

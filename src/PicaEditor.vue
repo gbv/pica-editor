@@ -51,10 +51,12 @@ import PicaFieldInfo from "./PicaFieldInfo.vue"
 import CodeMirror from "codemirror"
 
 import "./codemirror-pica.js"
+import "./addon/lint.js"
 
 // TODO: import from node_modules/codemirror
 import "./codemirror.min.css"
 import "./addon/active-line.js"
+import "./addon/lint.css"
 
 import { picaAtCursor, moveCursorNext } from "./PicaMirror.js"
 
@@ -144,12 +146,18 @@ export default {
         Tab: e => moveCursorNext(e, this.avram),
       },
     }
+    if (this.avram) {
+      options.gutters = ["CodeMirror-lint-markers"]
+    }
     this.$refs.editor.value = this.$refs.editor.value.trim()
     this.editor = CodeMirror.fromTextArea(this.$refs.editor, options)
     this.editor.on("change", editor => this.setText(editor.getValue()))
     const updateCursor = () => Object.assign(this, this.picaAtCursor(this.editor))
     this.editor.on("cursorActivity", updateCursor)
     updateCursor()
+    this.$watch("avram", (avram) => {
+      this.editor.setOption("lint", { avram })
+    })
   },
   methods: {
     picaAtCursor,
@@ -199,14 +207,18 @@ export default {
   border-right: 1px solid #ddd;
   font-size: 1rem;
 }
+.PicaEditor .CodeMirror-gutters {
+  background: white;
+  border: none;
+}
 .PicaEditor .CodeMirror {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   height: auto;
-  padding: 0.5em;
 }
 .PicaEditor .CodeMirror-scroll {
   max-height: 36em;
+  padding: 0.5em;
 }
 .PicaEditorPanel {
   background: #f7f7f7;

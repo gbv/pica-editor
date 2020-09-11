@@ -1,6 +1,7 @@
 import CodeMirror from "codemirror"
+import { parsePicaLine, picaFieldSchedule } from "./pica.js"
 
-// PICA mode for CodeMirror
+// PICA mode and PICA linter for CodeMirror
 
 CodeMirror.defineMode("pica", () => {
 
@@ -86,6 +87,36 @@ CodeMirror.defineMode("pica", () => {
       return "error"
     },
   }
+})
+
+CodeMirror.registerHelper("lint", "pica", (text, options) => {
+  const schema = options.avram
+
+  const found = []
+  const lines = text.split(/\n/)
+  for(var i=0; i<lines.length; i++) {
+    const field = parsePicaLine(lines[i])
+    if (field) {
+      if (schema && schema.fields) {
+        const schedule = picaFieldSchedule(schema, field)
+        if (!schedule) {
+          found.push({
+            from: {line: i, ch:0},
+            message:"unbekanntes Feld",
+          })
+        }
+      } else { console.log("NO FIELDS") }
+    } else {
+      // TODO: ggf. genauere Analyse z.B. Feld-ID oder Unterfeld-Code
+      found.push({
+        from: {line: i, ch:0 },
+        // to: {line: i, ch: lines[i].length-1 },
+        message: "PICA Plain Syntaxfehler",
+      })
+    }
+  }
+
+  return found
 })
 
 export default {}
