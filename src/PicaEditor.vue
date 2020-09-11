@@ -211,6 +211,9 @@ export default {
   background: white;
   border: none;
 }
+.PicaEditor .CodeMirror-lint-marker-error {
+  background: #8b0000;
+}
 .PicaEditor .CodeMirror {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
