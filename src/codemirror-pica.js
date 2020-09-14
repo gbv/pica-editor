@@ -98,7 +98,7 @@ CodeMirror.registerHelper("lint", "pica", (text, options, editor) => {
   const found = []
   
   text.split(/\n/).forEach( (lineText, line) => {    
-    if (line === "") return
+    if (lineText.match(/^\s*$/)) return
     const field = parsePicaLine(lineText)
 
     if (field) {    

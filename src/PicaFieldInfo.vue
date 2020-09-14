@@ -13,7 +13,10 @@
     <tr v-else>
       <td style="text-align:right">
         <code class="cm-variable-2">
-          <span>{{ field.tag }}</span>
+          <span
+            v-if="field.tag"
+            v-text="field.tag" />
+          <span v-else>&nbsp;</span>
           <span v-if="field.occurrence">/{{ field.occurrence }}</span>
         </code>
       </td>

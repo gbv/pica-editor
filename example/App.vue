@@ -7,6 +7,7 @@
       :picabase="picabase"
       :avram="avram"
       :filter="filter"
+      :footer="true"
       @update:record="updateRecord"
       @update:ppn="updatePPN">
       <pre>
