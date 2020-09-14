@@ -103,6 +103,8 @@ Editor instances can be configured with:
 | picabase | String | base URL of catalog to link into |
 | editable | Boolean | whether PICA record can be edited |
 | avram | Object | Avram Schema with definition of fields and subfields |
+| header | Boolean | show/hide header (default `true`) |
+| footer | Boolean | show/hide footer (default show only if field info is available) |
 
 The component emits two events:
 

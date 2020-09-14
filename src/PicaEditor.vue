@@ -2,7 +2,9 @@
   <form
     class="PicaEditor"
     @submit.prevent="loadRecord(inputPPN.trim())">
-    <div class="PicaEditorPanel top">
+    <div
+      v-if="header"
+      class="PicaEditorPanel top">
       <div
         v-if="unapi && dbkey"
         style="float: right">
@@ -36,7 +38,7 @@
       ref="editor"
       v-model="text" />
     <div
-      v-if="avram && field"
+      v-if="footer === true || (footer !== false && avram && field)"
       class="PicaEditorPanel bottom cm-s-default">
       <PicaFieldInfo
         :field="fieldSchedule || {unknown: field}"
@@ -68,6 +70,16 @@ function getTextChildren(nodes) {
 export default {
   components: { PicaFieldInfo },
   props: {
+    // display header
+    header: {
+      type: Boolean,
+      default: true,
+    },
+    // display footer
+    footer: {
+      type: Boolean,
+      default: undefined, // = if field info is available
+    },
     // unAPI base URL to load records from
     unapi: {
       type: String,
