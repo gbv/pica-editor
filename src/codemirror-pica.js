@@ -1,16 +1,19 @@
-import CodeMirror from "codemirror"
-import { parsePicaLine, picaFieldSchedule } from "./pica.js"
-
 // PICA mode and PICA linter for CodeMirror
 
+import CodeMirror from "codemirror"
+import { parsePicaLine, picaFieldSchedule, picaFieldIdentifier } from "./pica.js"
+
+const FIELD = "variable-2"
+const SUBFIELD = "comment"
+const CODE = "keyword"
+
+// PICA mode via hard-coded parser with improved fallback after errors
 CodeMirror.defineMode("pica", () => {
 
-  // hard-coded parser with improved fallback after errors
-
   const TOKEN = {
-    field: "variable-2",
-    subfield: "comment",
-    code: "keyword",
+    field: FIELD,
+    subfield: SUBFIELD,
+    code: CODE,
   }
 
   const startState = () => {
@@ -89,32 +92,50 @@ CodeMirror.defineMode("pica", () => {
   }
 })
 
-CodeMirror.registerHelper("lint", "pica", (text, options) => {
+CodeMirror.registerHelper("lint", "pica", (text, options, editor) => {
   const schema = options.avram
 
   const found = []
-  const lines = text.split(/\n/)
-  for(var i=0; i<lines.length; i++) {
-    const field = parsePicaLine(lines[i])
-    if (field) {
-      if (schema && schema.fields) {
+  
+  text.split(/\n/).forEach( (lineText, line) => {    
+    const field = parsePicaLine(lineText)
+
+    if (field) {    
+      if (schema && schema.fields) {        
         const schedule = picaFieldSchedule(schema, field)
         if (!schedule) {
+          const token = editor.getTokenAt({line, ch: 1})
           found.push({
-            from: {line: i, ch:0},
-            message:"unbekanntes Feld",
+            from: { line, ch: 0 },
+            to: { line, ch: token.end },              
+            message: "unbekanntes Feld " + picaFieldIdentifier(field),
+            severity: "warning",
           })
+        } else if (schedule.subfields) {
+          const tokens = editor.getLineTokens(line)
+          for (let i=2; i<tokens.length; i++) {
+            if (tokens[i].type === CODE) {
+              const code = tokens[i].string
+              if (!(code in schedule.subfields)) {
+                found.push({
+                  from: { line, ch: tokens[i].start-1 },
+                  to: { line, ch: tokens[i].end },
+                  message: "unbekanntes Unterfeld $"+code,                    
+                  severity: "warning",
+                })
+              }
+            }
+          }
         }
-      } else { console.log("NO FIELDS") }
+      }
     } else {
-      // TODO: ggf. genauere Analyse z.B. Feld-ID oder Unterfeld-Code
+      // TODO: genauere Angabe z.B. Feld-ID, Unterfeld-Code, fehlender Wert...
       found.push({
-        from: {line: i, ch:0 },
-        // to: {line: i, ch: lines[i].length-1 },
-        message: "PICA Plain Syntaxfehler",
+        from: {line, ch:0 },
+        message: "Syntaxfehler in PICA Plain",
       })
     }
-  }
+  })
 
   return found
 })

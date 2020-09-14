@@ -12,7 +12,7 @@
 
 ## Usage
 
-Try online at <https://gbv.github.io/pica-editor/>.
+Try online at <https://gbv.github.io/pica-editor/>!
 
 ## Installation
 
