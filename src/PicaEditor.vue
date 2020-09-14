@@ -232,11 +232,11 @@ export default {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   height: auto;
+  padding: 0.5em;
 }
 .PicaEditor .CodeMirror-scroll {
   min-height: 5em;
   max-height: 36em;
-  padding: 0.5em;
 }
 .CodeMirror-hints { /* injected at the end of the DOM, out of .PicaEditor */
   font-size: 1rem;
