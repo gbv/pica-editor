@@ -6,6 +6,7 @@
       :dbkey="dbkey"
       :picabase="picabase"
       :avram="avram"
+      :filter="filter"
       @update:record="updateRecord"
       @update:ppn="updatePPN">
       <pre>
@@ -78,6 +79,9 @@ export default {
     },
     updatePPN(ppn) {
       console.log(ppn)
+    },
+    filter(record) {
+      return record
     },
   },
 }

@@ -99,6 +99,7 @@ Editor instances can be configured with:
 |----|----|-----------|
 | unAPI | String | unAPI base URL to load records from |
 | dbkey | String | database key to load records from via unAPI |
+| filter | Function | function to filter loaded records |
 | picabase | String | base URL of catalog to link into |
 | editable | Boolean | whether PICA record can be edited |
 | avram | Object | Avram Schema with definition of fields and subfields |

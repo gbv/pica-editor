@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { serializePica, parsePica, getPPN, filterPicaFields, picaFieldSchedule } from "./pica.js"
+import { serializePica, parsePica, getPPN, picaFieldSchedule } from "./pica.js"
 import PicaFieldInfo from "./PicaFieldInfo.vue"
 import CodeMirror from "codemirror"
 
@@ -78,11 +78,6 @@ export default {
       type: String,
       default: null,
     },
-    // list of PICA Path expressions to filter loaded records
-    fields: {
-      type: Array,
-      default: null,
-    },
     // base URL of catalog to link into
     picabase: {
       type: String,
@@ -96,6 +91,11 @@ export default {
     // Avram Schema
     avram: {
       type: Object,
+      default: null,
+    },
+    // filter loaded records      
+    filter: {
+      type: Function,
       default: null,
     },
   },
@@ -184,7 +184,8 @@ export default {
         .then(response => response.ok ? response.json() : null)
         .then(record => {
           if (record) {
-            this.setRecord(this.fields ? filterPicaFields(record, this.fields) : record)
+            if (this.filter) record = this.filter(record)
+            this.setRecord(record)
           }
           if (this.$router) {
           // Push changed ppn and dbkey to router
@@ -219,6 +220,7 @@ export default {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   height: auto;
+  min-height: 5em;
 }
 .PicaEditor .CodeMirror-scroll {
   max-height: 36em;
