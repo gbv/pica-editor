@@ -87,9 +87,9 @@
 </pica-editor>
     </div>
     <div class="example" title="Filter loaded records to level 0 fields">
-<pica-editor :filter="titleFilter"
-             :dbkey="'opac-de-627'" 
-             :unapi="'https://unapi.k10plus.de/'">
+<pica-editor :dbkey="'opac-de-627'" 
+             :unapi="'https://unapi.k10plus.de/'"
+             :filter="rec => rec.filter(f => f[0][0]==='0')">
   <pre>003@ $0355973081</pre>
 </pica-editor>
     </div>
