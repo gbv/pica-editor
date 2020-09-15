@@ -102,29 +102,42 @@ CodeMirror.registerHelper("lint", "pica", (text, options, editor) => {
     const field = parsePicaLine(lineText)
 
     if (field) {    
-      if (schema && schema.fields) {        
-        const schedule = picaFieldSchedule(schema, field)
-        if (!schedule) {
-          const token = editor.getTokenAt({line, ch: 1})
-          found.push({
-            from: { line, ch: 0 },
-            to: { line, ch: token.end },              
-            message: "unbekanntes Feld " + picaFieldIdentifier(field),
-            severity: "warning",
-          })
-        } else if (schedule.subfields) {
-          const tokens = editor.getLineTokens(line)
-          for (let i=2; i<tokens.length; i++) {
-            if (tokens[i].type === CODE) {
-              const code = tokens[i].string
-              if (!(code in schedule.subfields)) {
+      if (!schema || !schema.fields) return
+
+      const schedule = picaFieldSchedule(schema, field)
+      if (!schedule) {
+        const token = editor.getTokenAt({line, ch: 1})
+        found.push({
+          from: { line, ch: 0 },
+          to: { line, ch: token.end },              
+          message: "unbekanntes Feld " + picaFieldIdentifier(field),
+          severity: "warning",
+        })
+      } else if (schedule.subfields) {
+        const { subfields } = schedule
+        const tokens = editor.getLineTokens(line)
+        const usedSubfields = new Set()
+        for (let i=2; i<tokens.length; i++) {
+          if (tokens[i].type === CODE) {
+            const code = tokens[i].string
+
+            if (code in subfields) {                              
+              if (usedSubfields.has(code) && subfields[code].repeatable === false) {
                 found.push({
                   from: { line, ch: tokens[i].start-1 },
                   to: { line, ch: tokens[i].end },
-                  message: "unbekanntes Unterfeld $"+code,                    
+                  message: "nicht wiederholbares Unterfeld $"+code,                    
                   severity: "warning",
                 })
               }
+              usedSubfields.add(code)
+            } else {
+              found.push({
+                from: { line, ch: tokens[i].start-1 },
+                to: { line, ch: tokens[i].end },
+                message: "unbekanntes Unterfeld $"+code,                    
+                severity: "warning",
+              })
             }
           }
         }
