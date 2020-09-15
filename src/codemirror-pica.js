@@ -1,7 +1,7 @@
 // PICA mode and PICA linter for CodeMirror
 
 import CodeMirror from "codemirror"
-import { parsePicaLine, picaFieldSchedule, picaFieldIdentifier } from "pica-data"
+import { parsePicaLine, picaFieldScheduleIdentifier, picaFieldIdentifier } from "pica-data"
 
 const FIELD = "variable-2"
 const SUBFIELD = "comment"
@@ -96,6 +96,7 @@ CodeMirror.registerHelper("lint", "pica", (text, options, editor) => {
   const schema = options.avram
 
   const found = []
+  const usedFields = new Set()
   
   text.split(/\n/).forEach( (lineText, line) => {    
     if (lineText.match(/^\s*$/)) return
@@ -104,7 +105,9 @@ CodeMirror.registerHelper("lint", "pica", (text, options, editor) => {
     if (field) {    
       if (!schema || !schema.fields) return
 
-      const schedule = picaFieldSchedule(schema, field)
+      const id = picaFieldScheduleIdentifier(schema, field)
+      const schedule = schema.fields[id]
+
       if (!schedule) {
         const token = editor.getTokenAt({line, ch: 1})
         found.push({
@@ -113,7 +116,21 @@ CodeMirror.registerHelper("lint", "pica", (text, options, editor) => {
           message: "unbekanntes Feld " + picaFieldIdentifier(field),
           severity: "warning",
         })
-      } else if (schedule.subfields) {
+        return
+      }
+
+      if (usedFields.has(id) && schedule.repeatable === false) {
+        const token = editor.getTokenAt({line, ch: 1})
+        found.push({
+          from: { line, ch: 0 },
+          to: { line, ch: token.end },              
+          message: "nicht wiederholbares Feld " + id,
+          severity: "warning",
+        })
+      }
+      usedFields.add(id)
+
+      if (schedule.subfields) {
         const { subfields } = schedule
         const tokens = editor.getLineTokens(line)
         const usedSubfields = new Set()
