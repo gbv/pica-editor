@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { serializePica, parsePica, getPPN, picaFieldSchedule } from "./pica.js"
+import { serializePica, parsePica, getPPN, picaFieldSchedule } from "pica-data"
 import PicaFieldInfo from "./PicaFieldInfo.vue"
 import CodeMirror from "codemirror"
 
@@ -56,7 +56,6 @@ import "./codemirror-pica.js"
 import "./addon/lint.js"
 
 // TODO: import from node_modules/codemirror
-import "./codemirror.min.css"
 import "./addon/active-line.js"
 import "./addon/lint.css"
 

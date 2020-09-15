@@ -1,7 +1,7 @@
 import "./codemirror-pica.js"
 import "./addon/show-hint.js"
 import "./addon/show-hint.css"
-import { picaFieldSchedule } from "./pica.js"
+import { picaFieldSchedule } from "pica-data"
 
 export function subfieldHint(editor, field, avram, current) {
   if (!field[0] || !avram) return

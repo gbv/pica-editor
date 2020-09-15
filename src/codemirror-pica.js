@@ -1,7 +1,7 @@
 // PICA mode and PICA linter for CodeMirror
 
 import CodeMirror from "codemirror"
-import { parsePicaLine, picaFieldSchedule, picaFieldIdentifier } from "./pica.js"
+import { parsePicaLine, picaFieldSchedule, picaFieldIdentifier } from "pica-data"
 
 const FIELD = "variable-2"
 const SUBFIELD = "comment"

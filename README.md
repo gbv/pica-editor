@@ -56,6 +56,8 @@ Finally create a Vue application that registers the `PicaEditor` component and m
 We recommend to build your application with [vite](https://github.com/vitejs/vite) so Vue modules can be used as single file components (`.vue` files). In you HTML page:
 
 ~~~html
+<link rel="stylesheet" href="https://unpkg.com/codemirror/lib/codemirror.css">
+
 <div id="app"></div>
 <script type="module" src="main.js"></script>
 ~~~

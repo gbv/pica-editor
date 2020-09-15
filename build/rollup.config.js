@@ -1,4 +1,5 @@
 import commonjs from "@rollup/plugin-commonjs"
+import resolve from '@rollup/plugin-node-resolve'
 import babel from "@rollup/plugin-babel"
 import vue from "rollup-plugin-vue"
 import css from "rollup-plugin-css-only"
@@ -18,15 +19,11 @@ export default {
   external: ["vue", "codemirror"],
   plugins: [
     commonjs(),
+    resolve(),
     vue({
       compileTemplate: true,
     }),
-    css({
-      output: (_, styles) => {
-        if (!fs.existsSync("dist")) fs.mkdirSync("dist")
-        fs.writeFileSync("dist/pica-editor.css", Object.values(styles).filter(css => !css.match(/^\.CodeMirror{/)).join("\n"))
-      },
-    }),
+    css({ output: "dist/pica-editor.css" }),
     babel({
       babelHelpers: "bundled",
     }),
