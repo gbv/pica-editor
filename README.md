@@ -53,10 +53,11 @@ Finally create a Vue application that registers the `PicaEditor` component and m
 
 ### Use as ES Module in Vue web applications
 
-We recommend to build your application with [vite](https://github.com/vitejs/vite) so Vue modules can be used as single file components (`.vue` files). In you HTML page:
+We recommend to build your application with [vite](https://github.com/vitejs/vite) so Vue modules can be used as single file components (`.vue` files). In you HTML page include CSS files of CodeMirror and PicaEditor:
 
 ~~~html
 <link rel="stylesheet" href="https://unpkg.com/codemirror/lib/codemirror.css">
+<link rel="stylesheet" href="https://unpkg.com/pica-editor/dist/pica-editor.css">
 
 <div id="app"></div>
 <script type="module" src="main.js"></script>
