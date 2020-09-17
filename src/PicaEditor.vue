@@ -272,7 +272,7 @@ export default {
   padding: 0.5em;
 }
 .PicaEditor .CodeMirror-scroll {
-  min-height: 5em;
+  min-height: 1em;
   max-height: 36em;
 }
 .CodeMirror-hints { /* injected at the end of the DOM, out of .PicaEditor */

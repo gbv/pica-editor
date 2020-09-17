@@ -40,11 +40,12 @@
     for detailed instructions and documentation.
   </p>
   <div id="app">
-    <h2 id="demo">Demo</h2>
+  <h2 id="examples">Examples</h2>
+  <div class="example" title="Demo">
 <pica-editor :dbkey="'opac-de-627'"
              :picabase="'https://opac.k10plus.de/'"
              :unapi="'https://unapi.k10plus.de/'"
-             :avram="avram">
+             :avram="'https://format.k10plus.de/avram.pl?profile=k10plus'">
   <pre>
 003@ $0355973081
 010@ $ager
@@ -63,14 +64,9 @@
 045V $a10$a24,2
   </pre>
 </pica-editor>
-    <p>
-      If you don't see a nice editor, either your browser is too old or
-      there is a bug. Sorry!
-    </p>
-    
-    <h2 id="examples">Examples</h2>
+  </div>    
     <div class="example" title="Minimal usage">
-<pica-editor :header="false">
+<pica-editor>
   <pre>003@ $0355973081</pre>
 </pica-editor>
     </div>
@@ -102,12 +98,6 @@ Vue.createApp({
   data: () => {
     return { 
       avram: "https://format.k10plus.de/avram.pl?profile=k10plus"
-    }
-  },
-  methods: {
-    titleFilter(record) {
-      console.log("FILTER")
-      return record.filter(field => field[0][0] == '0')
     }
   }
 }).mount("#app")

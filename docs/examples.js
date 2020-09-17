@@ -1,7 +1,10 @@
 Array.from(document.getElementsByClassName("example")).forEach(ex => {
   const pre = document.createElement("pre")
   pre.className = "html"
-  pre.appendChild(document.createTextNode(ex.innerHTML))
+  var text = ex.innerHTML
+  if (text.split("\n").length > 10) text = text.replace(/<pre>.+<.pre>/sm,"...")
+
+  pre.appendChild(document.createTextNode(text))
   ex.insertBefore(pre, ex.firstChild)
 
   const title = ex.getAttribute("title")
