@@ -135,7 +135,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .error { color: #8b0000; }
 .cardinality {
   float:right;

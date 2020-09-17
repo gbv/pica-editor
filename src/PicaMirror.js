@@ -3,6 +3,7 @@ import "./addon/show-hint.js"
 import "./addon/show-hint.css"
 import { picaFieldSchedule } from "pica-data"
 
+// show dropdown of possible subfields
 export function subfieldHint(editor, field, avram, current) {
   if (!field[0] || !avram) return
   const { subfields } = picaFieldSchedule(avram, field) || {}
@@ -12,7 +13,7 @@ export function subfieldHint(editor, field, avram, current) {
     hint: (editor) => {
       const { line, ch } = editor.getCursor()
 
-      // just list all subfields. TODO: filter subfields
+      // just list all subfields. TODO: exclude subfields which are not allowed here
       const codes = Object.keys(subfields).sort()
       const list = codes.map(text => {
         return { text, displayText: text + " " + subfields[text].label }
@@ -40,7 +41,7 @@ export function moveCursorNext(editor, avram) {
     const { type, end } = tokens[i]
     const last = i == tokens.length-1
 
-    // parse current line to PICA/JSON field
+    // parse current line to PICA field
     const field = [null, null]
     if (tokens[0].type === "variable-2") {
       field[0] = tokens[0].string.split("/")[0] // tag

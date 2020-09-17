@@ -6,7 +6,6 @@
       :dbkey="dbkey"
       :picabase="picabase"
       :avram="avram"
-      :filter="true"
       :footer="true"
       @update:record="updateRecord"
       @update:ppn="updatePPN">
@@ -50,7 +49,8 @@ const config = {
   unapi: "https://unapi.k10plus.de/",
   dbkey: "opac-de-627",
   picabase: "https://opac.k10plus.de/",
-  avram: "https://format.k10plus.de/avram.pl",
+  avramApi: "https://format.k10plus.de/avram.pl",
+  profile: "k10plus",
   examples: [ "161165839X", "1673636357", "168675535X" ],
 }
 
@@ -59,31 +59,21 @@ export default {
   data() {
     return {
       ...config,
-      avram: {},
-    } },
-  mounted() {
-    this.loadAvram("k10plus")
+      avram: config.avramApi+"?profile="+config.profile,
+    } 
   },
   methods: {
-    async loadAvram(profile) {
-      const avram = await (fetch("https://format.k10plus.de/avram.pl?profile="+profile)
-        .then(res => res.ok ? res.json() : {}))
-      this.avram = avram
-    },
     loadRecord(ppn) {
       // Use $nextTick to give dbkey the chance to propagate to PicaEditor
       this.$nextTick(() => {
         this.$refs.editor.loadRecord(ppn)
       })
     },
-    updateRecord(record) {
-      console.log(JSON.stringify(record))
+    updateRecord() {
+      console.log("updateRecord")
     },
     updatePPN(ppn) {
       console.log(ppn)
-    },
-    filter(record) {
-      return record
     },
   },
 }

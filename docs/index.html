@@ -70,7 +70,7 @@
     
     <h2 id="examples">Examples</h2>
     <div class="example" title="Minimal usage">
-<pica-editor>
+<pica-editor :header="false">
   <pre>003@ $0355973081</pre>
 </pica-editor>
     </div>
@@ -100,17 +100,11 @@
 Vue.createApp({
   components: { PicaEditor },
   data: () => {
-    return { avram: {} }
-  },
-  mounted() {
-    this.loadAvram("k10plus")
+    return { 
+      avram: "https://format.k10plus.de/avram.pl?profile=k10plus"
+    }
   },
   methods: {
-    async loadAvram(profile) {
-      const avram = await (fetch("https://format.k10plus.de/avram.pl?profile="+profile)
-        .then(res => res.ok ? res.json() : {}))
-      this.avram = avram
-    },
     titleFilter(record) {
       console.log("FILTER")
       return record.filter(field => field[0][0] == '0')

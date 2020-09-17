@@ -105,7 +105,7 @@ Editor instances can be configured with:
 | filter | Function/Boolean | function to filter records when loaded or set |
 | picabase | String | base URL of catalog to link into |
 | editable | Boolean | whether PICA record can be edited |
-| avram | Object | Avram Schema with definition of fields and subfields |
+| avram | Object/URL | Avram Schema with definition of fields and subfields |
 | header | Boolean | show/hide header (default `true`) |
 | footer | Boolean | show/hide footer (default show only if field info is available) |
 
@@ -120,7 +120,7 @@ The components provides methods:
 * `setText` to set the PICA record in PICA Plain syntax
 * `loadRecord(ppn)` to load a PICA record via unAPI
 
-When `filter` is set to `true`, records are filtered to a given `avram` schema.
+When `filter` is set to `true`, records are filtered to the current `avram` schema.
 
 ## Development
 

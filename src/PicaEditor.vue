@@ -5,18 +5,24 @@
     <div
       v-if="header"
       class="PicaEditorPanel top">
-      <div
-        v-if="unapi && dbkey"
-        style="float: right">
-        <input
-          v-model="inputPPN"
-          type="text"
-          placeholder="PPN">
-        <button
-          type="submit"
-          :disabled="!inputPPN">
-          laden
-        </button>
+      <div style="float:right">
+        <a
+          v-if="avramSchema"
+          target="help"
+          :data-tooltip="avramSchema.title || 'Format-Informationen vorhanden'"
+          style="padding-right: 1em"
+          :href="avramSchema.url || (typeof avram === 'string' ? avram : '')">&#9432;</a>
+        <span v-if="unapi && dbkey">
+          <input
+            v-model="inputPPN"
+            type="text"
+            placeholder="PPN">
+          <button
+            type="submit"
+            :disabled="!inputPPN">
+            laden
+          </button>
+        </span>
       </div>
       <ul>
         <li v-if="picabase && dbkey">
@@ -35,10 +41,10 @@
       </ul>
     </div>
     <textarea
-      ref="editorElement"
+      ref="editor"
       v-model="text" />
     <div
-      v-if="footer === true || (footer !== false && avram && field)"
+      v-if="footer === true || (footer !== false && avramSchema && field)"
       class="PicaEditorPanel bottom cm-s-default">
       <PicaFieldInfo
         :field="fieldSchedule || {unknown: field}"
@@ -62,7 +68,11 @@ import "./addon/lint.css"
 import { picaAtCursor, moveCursorNext } from "./PicaMirror.js"
 
 function getTextChildren(nodes) {
-  return nodes.map(node => typeof node.children === "string" ? node.children : "").join("")
+  return nodes.map(node => typeof node.children === "string" ? node.children : "").join("").trim()
+}
+
+async function fetchJSON(url) {
+  return fetch(url).then(response => response.ok ? response.json() : null)
 }
 
 // CodeMirror instance for PICA Plain records
@@ -77,7 +87,7 @@ export default {
     // display footer
     footer: {
       type: Boolean,
-      default: undefined, // = if field info is available
+      default: undefined, // show only if field info is available
     },
     // unAPI base URL to load records from
     unapi: {
@@ -99,9 +109,9 @@ export default {
       type: Boolean,
       default: true,
     },
-    // Avram Schema
+    // Avram Schema or Schema URL
     avram: {
-      type: Object,
+      type: [Object, String],
       default: null,
     },
     // filter loaded records      
@@ -112,24 +122,25 @@ export default {
   },
   emits: ["update:record", "update:ppn"],
   data: function() {
-    const filterRecord = typeof this.filter === "function" ? this.filter : (r => r)
+    const filterRecord = typeof this.filter === "function" ? this.filter : null
     return {
-      text: "",         // record in PICA Plain
-      record: [],       // record in PICA/JSON
-      inputPPN: null,   // PPN in input field
-      ppn: null,        // PPN found in the record
-      field: null,      // field identifier at cursor
-      subfield: null,   // subfield code at cursor
-      filterRecord,
+      text: "",          // record in PICA Plain
+      record: [],        // record in PICA/JSON
+      inputPPN: null,    // PPN in input field
+      ppn: null,         // PPN found in the record
+      field: null,       // field identifier at cursor
+      subfield: null,    // subfield code at cursor
+      filterRecord,      // filter function
+      avramSchema: null, // Avram Schema object
     }
   },
   computed: {
     fieldSchedule() {
-      return picaFieldSchedule(this.avram, this.field)
+      return picaFieldSchedule(this.avramSchema, this.field)
     },
   },
-  created() {
-    this.$watch("record", (record, old) => {
+  watch: {
+    record(record, old) {
       if (record === old || JSON.stringify(record) === JSON.stringify(old)) return
       this.$emit("update:record", record)
 
@@ -137,50 +148,66 @@ export default {
       if (ppn && ppn !== this.ppn) {
         this.ppn = ppn
       }
-    })
-
-    this.$watch("ppn", (ppn, old) => {
+    },
+    ppn(ppn, old) {
       if (ppn === old) return
       this.$emit("update:ppn", ppn)
       if (!this.inputPPN) this.inputPPN = ppn
-    })
-
-    this.$watch("avram", (schema) => {
-      if (this.filter === true) {
-        this.filterRecord = record => reduceRecord(record, schema)
-        this.setRecord(this.record)
-      }
-    })
-
-    // get record in PICA Plain from element content
+    },
+  },
+  created() {
     const slot = this.$slots.default
     this.setText(slot ? getTextChildren(slot()) : "")
   },
   mounted: function() {
     const options = {
       mode: "pica",
+      value: this.text,
       readOnly: !this.editable,
       styleActiveLine: true,
       lineWrapping: true,
       extraKeys: {
-        Tab: e => moveCursorNext(e, this.avram),
+        Tab: e => moveCursorNext(e, this.avramSchema),
       },
     }
-    if (this.avram) {
-      options.gutters = ["CodeMirror-lint-markers"]
-    }
 
-    const { editorElement } = this.$refs
-    editorElement.value = this.text || editorElement.value.trim()
-    this.editor = CodeMirror.fromTextArea(editorElement, options)
+    const ed = this.$refs.editor
+    this.editor = CodeMirror(e => ed.parentNode.replaceChild(e, ed), options)
 
     this.editor.on("change", editor => this.setText(editor.getValue()))
+
     const updateCursor = () => Object.assign(this, this.picaAtCursor(this.editor))
     this.editor.on("cursorActivity", updateCursor)
     updateCursor()
-    this.$watch("avram", (avram) => {
-      this.editor.setOption("lint", { avram })
-    })
+         
+    const updateSchema = (schema) => {
+      this.avramSchema = schema
+      if (schema && schema.fields) {            
+        this.editor.setOption("gutters", ["CodeMirror-lint-markers"])
+        this.editor.setOption("lint", { avram: schema })
+        if (this.filter === true) {
+          this.filterRecord = record => reduceRecord(record, schema)
+          this.setRecord(this.record)            
+        }
+      } else {
+        this.editor.setOption("lint", false)
+        this.editor.setOption("gutters", [])
+        if (this.filter === true) {
+          this.filterRecord = null
+        }
+      }
+    }
+
+    const updateAvram = (avram) => {
+      if (typeof avram === "string") {
+        fetchJSON(avram).then(updateSchema)
+      } else {
+        updateSchema(avram)
+      }
+    }
+
+    this.$watch("avramSchema", updateAvram)
+    updateAvram(this.avram)
   },
   methods: {
     picaAtCursor,
@@ -189,8 +216,7 @@ export default {
       this.record = parsePica(text)
     },
     setRecord(record) {
-      console.log("setRecord")
-      this.record = this.filterRecord(record)
+      this.record = this.filterRecord ? this.filterRecord(record) : record
       this.text = serializePica(this.record)
       if (this.editor) { // editor may be not mounted yet
         this.editor.setValue(this.text)
@@ -204,8 +230,7 @@ export default {
         this.setRecord([])
         return
       }
-      fetch(`${this.unapi}?format=picajson&id=${this.dbkey}:ppn:${this.ppn}`)
-        .then(response => response.ok ? response.json() : null)
+      fetchJSON(`${this.unapi}?format=picajson&id=${this.dbkey}:ppn:${this.ppn}`)
         .then(record => {
           if (record) {
             this.setRecord(record)
