@@ -8,6 +8,7 @@ Array.from(document.getElementsByClassName("example")).forEach(ex => {
   ex.insertBefore(pre, ex.firstChild)
 
   const title = ex.getAttribute("title")
+  ex.removeAttribute("title")
   if (title) {
     ex.insertBefore(document.createTextNode(title+":"), ex.firstChild)
   }
