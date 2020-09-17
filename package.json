@@ -1,6 +1,6 @@
 {
   "name": "pica-editor",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Vue component to display and edit PICA records",
   "main": "dist/pica-editor.js",
   "unpkg": "dist/pica-editor.js",
