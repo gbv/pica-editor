@@ -71,7 +71,7 @@ import "./addon/lint.js"
 import "./addon/active-line.js"
 import "./addon/lint.css"
 
-import { picaAtCursor, moveCursorNext } from "./PicaMirror.js"
+import { picaAtCursor, moveCursorNext, configureMouse } from "./PicaMirror.js"
 
 function getTextChildren(nodes) {
   return nodes.map(node => typeof node.children === "string" ? node.children : "").join("").trim()
@@ -175,6 +175,7 @@ export default {
       extraKeys: {
         Tab: e => moveCursorNext(e, this.avramSchema),
       },
+      configureMouse,
     }
 
     const ed = this.$refs.editor

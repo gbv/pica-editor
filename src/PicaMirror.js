@@ -30,6 +30,16 @@ export function subfieldHint(editor, field, avram, current) {
 
 // called when TAB is pressed
 export function moveCursorNext(editor, avram) {
+
+  // subfield code selected => goto start of code
+  if (editor.somethingSelected()) {
+    const { line, ch } = editor.getCursor()
+    const { start, type } = editor.getTokenAt({line, ch})
+    if (type === "keyword") {
+      editor.setCursor({ line, ch: start })
+    }
+  }
+
   const { line, ch } = editor.getCursor()
   const tokens = editor.getLineTokens(line)
 
@@ -96,5 +106,25 @@ export function picaAtCursor(editor) {
     }
   }
   return { field, subfield } 
+}
+
+export function configureMouse(editor, repeat) {
+  if (repeat==="double") {
+    return { 
+      unit(editor, pos) {
+        const { line } = pos
+        var { start, end, type } = editor.getTokenAt(pos)
+        if (type === "comment") { // select subfield code after '$'
+          const next = editor.getTokenAt({line, ch:end+1})
+          if (next && next.type === "keyword") {
+            start = next.start
+            end = next.end
+          }
+        }
+        return { from: {line, ch: start}, to: {line, ch:end} }
+      }, 
+    }
+  }
+  return {}
 }
 
