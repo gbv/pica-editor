@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "codemirror": "^5.57.0",
-    "pica-data": "^0.2.2",
+    "pica-data": "^0.2.3",
     "vue": "^3.0.0-rc.8"
   }
 }

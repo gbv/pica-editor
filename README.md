@@ -102,7 +102,7 @@ Editor instances can be configured with:
 |----|----|-----------|
 | unAPI | String | unAPI base URL to load records from |
 | dbkey | String | database key to load records from via unAPI |
-| filter | Function | function to filter loaded records |
+| filter | Function/Boolean | function to filter records when loaded or set |
 | picabase | String | base URL of catalog to link into |
 | editable | Boolean | whether PICA record can be edited |
 | avram | Object | Avram Schema with definition of fields and subfields |
@@ -113,6 +113,14 @@ The component emits two events:
 
 * `update:record` when the parsed PICA record has been changed
 * `update:ppn` when the PPN has been changed
+
+The components provides methods:
+
+* `setRecord` to set the PICA record in PICA/JSON structure
+* `setText` to set the PICA record in PICA Plain syntax
+* `loadRecord(ppn)` to load a PICA record via unAPI
+
+When `filter` is set to `true`, records are filtered to a given `avram` schema.
 
 ## Development
 

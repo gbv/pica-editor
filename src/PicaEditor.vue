@@ -35,7 +35,7 @@
       </ul>
     </div>
     <textarea
-      ref="editor"
+      ref="editorElement"
       v-model="text" />
     <div
       v-if="footer === true || (footer !== false && avram && field)"
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { serializePica, parsePica, getPPN, picaFieldSchedule } from "pica-data"
+import { serializePica, parsePica, getPPN, picaFieldSchedule, reduceRecord } from "pica-data"
 import PicaFieldInfo from "./PicaFieldInfo.vue"
 import CodeMirror from "codemirror"
 
@@ -106,12 +106,13 @@ export default {
     },
     // filter loaded records      
     filter: {
-      type: Function,
+      type: [Function, Boolean],
       default: null,
     },
   },
   emits: ["update:record", "update:ppn"],
   data: function() {
+    const filterRecord = typeof this.filter === "function" ? this.filter : (r => r)
     return {
       text: "",         // record in PICA Plain
       record: [],       // record in PICA/JSON
@@ -119,6 +120,7 @@ export default {
       ppn: null,        // PPN found in the record
       field: null,      // field identifier at cursor
       subfield: null,   // subfield code at cursor
+      filterRecord,
     }
   },
   computed: {
@@ -143,6 +145,13 @@ export default {
       if (!this.inputPPN) this.inputPPN = ppn
     })
 
+    this.$watch("avram", (schema) => {
+      if (this.filter === true) {
+        this.filterRecord = record => reduceRecord(record, schema)
+        this.setRecord(this.record)
+      }
+    })
+
     // get record in PICA Plain from element content
     const slot = this.$slots.default
     this.setText(slot ? getTextChildren(slot()) : "")
@@ -160,8 +169,11 @@ export default {
     if (this.avram) {
       options.gutters = ["CodeMirror-lint-markers"]
     }
-    this.$refs.editor.value = this.$refs.editor.value.trim()
-    this.editor = CodeMirror.fromTextArea(this.$refs.editor, options)
+
+    const { editorElement } = this.$refs
+    editorElement.value = this.text || editorElement.value.trim()
+    this.editor = CodeMirror.fromTextArea(editorElement, options)
+
     this.editor.on("change", editor => this.setText(editor.getValue()))
     const updateCursor = () => Object.assign(this, this.picaAtCursor(this.editor))
     this.editor.on("cursorActivity", updateCursor)
@@ -177,9 +189,10 @@ export default {
       this.record = parsePica(text)
     },
     setRecord(record) {
-      this.record = record
-      this.text = serializePica(record)
-      if (this.editor) { // editor may not be mounted yet
+      console.log("setRecord")
+      this.record = this.filterRecord(record)
+      this.text = serializePica(this.record)
+      if (this.editor) { // editor may be not mounted yet
         this.editor.setValue(this.text)
       }
     },
@@ -195,11 +208,11 @@ export default {
         .then(response => response.ok ? response.json() : null)
         .then(record => {
           if (record) {
-            if (this.filter) record = this.filter(record)
             this.setRecord(record)
           }
+          // TODO: document this or remove
           if (this.$router) {
-          // Push changed ppn and dbkey to router
+            // Push changed ppn and dbkey to router
             this.$router.push({
               query: {
                 ppn: this.ppn,

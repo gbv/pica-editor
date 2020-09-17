@@ -6,13 +6,14 @@
       :dbkey="dbkey"
       :picabase="picabase"
       :avram="avram"
-      :filter="filter"
+      :filter="true"
       :footer="true"
       @update:record="updateRecord"
       @update:ppn="updatePPN">
       <pre>
 003@ $0355973081
 010@ $ager
+001U $0utf8
 011@ $a2001
 019@ $aXA-DE
 021A $a@Zehn Jahre Pica in Niedersachsen und Deutschland$dSkizzen eines Erfolgs aus Anlass der 5. Verbundkonferenz des Gemeinsamen Bibliotheksverbundes der Länder Bremen, Hamburg, Mecklenburg-Vorpommern, Niedersachsen, Sachsen-Anhalt, Schleswig-Holstein und Thüringen, vom 11.-12. September, 2001 in Göttingen$h[Redaktion, Elmar Mittler]
