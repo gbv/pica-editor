@@ -6,12 +6,18 @@
       v-if="header"
       class="PicaEditorPanel top">
       <div style="float:right">
-        <a
+        <span
           v-if="avramSchema"
-          target="help"
-          :data-tooltip="avramSchema.title || 'Format-Informationen vorhanden'"
-          style="padding-right: 1em"
-          :href="avramSchema.url || (typeof avram === 'string' ? avram : '')">&#9432;</a>
+          style="padding-right: 0.5em"
+          :data-tooltip="avramSchema.title || 'Format-Informationen vorhanden'">
+          <a
+            v-if="avramSchema.url"
+            target="help"
+            :href="avramSchema.url">&#9432;</a>
+          <a
+            v-if="typeof avram === 'string'"
+            :href="avram">⚙ </a>
+        </span>
         <span v-if="unapi && dbkey">
           <input
             v-model="inputPPN"
