@@ -213,7 +213,7 @@ export default {
       }
     }
 
-    this.$watch("avramSchema", updateAvram)
+    this.$watch("avram", updateAvram)
     updateAvram(this.avram)
   },
   methods: {
