@@ -2,7 +2,8 @@
   <div>
     <PicaEditor
       ref="editor"
-      :unapi="unapi"
+      xxx:unapi="unapi"
+      :srubase="'http://sru.gbv.de/opac-de-627'"
       :dbkey="dbkey"
       :picabase="picabase"
       :avram="avram"

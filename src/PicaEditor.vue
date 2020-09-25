@@ -18,7 +18,7 @@
             v-if="typeof avram === 'string'"
             :href="avram">⚙ </a>
         </span>
-        <span v-if="unapi && dbkey">
+        <span v-if="srubase || (unapi && dbkey)">
           <input
             v-model="inputPPN"
             type="text"
@@ -71,6 +71,8 @@ import "./addon/lint.js"
 import "./addon/active-line.js"
 import "./addon/lint.css"
 
+import { picaRecordViaSRU } from "./sru.js"
+
 import { picaAtCursor, moveCursorNext, configureMouse } from "./PicaMirror.js"
 
 function getTextChildren(nodes) {
@@ -102,6 +104,11 @@ export default {
     },
     // database key to load records from via unAPI
     dbkey: {
+      type: String,
+      default: null,
+    },
+    // SRU base URL to load records from
+    srubase: {
       type: String,
       default: null,
     },
@@ -230,29 +237,33 @@ export default {
       }
     },
     loadRecord(ppn) {
+      const { unapi, srubase, dbkey } = this
       if (ppn) {
         this.ppn = ppn
       }
-      if (!this.ppn || !this.dbkey) {
+      if (!this.ppn || (unapi && !dbkey) || !(unapi || srubase)) {
         this.setRecord([])
         return
       }
-      fetchJSON(`${this.unapi}?format=picajson&id=${this.dbkey}:ppn:${this.ppn}`)
-        .then(record => {
-          if (record) {
-            this.setRecord(record)
-          }
-          // TODO: document this or remove
-          if (this.$router) {
-            // Push changed ppn and dbkey to router
-            this.$router.push({
-              query: {
-                ppn: this.ppn,
-                dbkey: this.dbkey,
-              },
-            })
-          }
-        })
+
+      const fetchRecord = this.unapi
+        ? fetchJSON(`${unapi}?format=picajson&id=${dbkey}:ppn:${this.ppn}`)
+        : picaRecordViaSRU({ baseUrl: srubase }, this.ppn)
+
+      fetchRecord.then(record => {
+        if (record) this.setRecord(record)
+        if (this.$router) this._pushRouter()
+      })
+    },
+    // TODO: document this or remove
+    _pushRouter() {
+      // Push changed ppn and dbkey to router
+      this.$router.push({
+        query: {
+          ppn: this.ppn,
+          dbkey: this.dbkey,
+        },
+      })
     },
   },
 }
