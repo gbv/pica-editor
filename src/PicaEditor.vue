@@ -105,6 +105,11 @@ export default {
       type: String,
       default: null,
     },
+    // added to unAPI query to filter response format
+    xpn: {
+      type: String,
+      default: "",
+    },
     // base URL of catalog to link into
     picabase: {
       type: String,
@@ -237,7 +242,8 @@ export default {
         this.setRecord([])
         return
       }
-      fetchJSON(`${this.unapi}?format=picajson&id=${this.dbkey}:ppn:${this.ppn}`)
+      const xpn = this.xpn ? `!xpn%3D${this.xpn}` : ""
+      fetchJSON(`${this.unapi}?format=picajson&id=${this.dbkey}${xpn}:ppn:${this.ppn}`)
         .then(record => {
           if (record) {
             this.setRecord(record)

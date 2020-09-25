@@ -4,6 +4,7 @@
       ref="editor"
       :unapi="unapi"
       :dbkey="dbkey"
+      :xpn="'online'"
       :picabase="picabase"
       :avram="avram"
       :footer="true"
