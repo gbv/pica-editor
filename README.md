@@ -102,6 +102,7 @@ Editor instances can be configured with:
 |----|----|-----------|
 | unAPI | String | unAPI base URL to load records from |
 | dbkey | String | database key to load records from via unAPI |
+| xpn | String | optional flag to control request format (`offline` or `online`) |
 | filter | Function/Boolean | function to filter records when loaded or set |
 | picabase | String | base URL of catalog to link into |
 | editable | Boolean | whether PICA record can be edited |

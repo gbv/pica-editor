@@ -52,15 +52,15 @@
     <div
       v-if="footer === true || (footer !== false && avramSchema && field)"
       class="PicaEditorPanel bottom cm-s-default">
-      <PicaFieldInfo
-        :field="fieldSchedule || {unknown: field}"
+      <PicaFieldInfo 
+        :field="fieldSchedule || (field ? {unknown: picaFieldIdentifier(field)} : {})"
         :subfield="subfield" />
     </div>
   </form>
 </template>
 
 <script>
-import { serializePica, parsePica, getPPN, picaFieldSchedule, reduceRecord } from "pica-data"
+import { serializePica, parsePica, getPPN, picaFieldSchedule, picaFieldIdentifier, reduceRecord } from "pica-data"
 import PicaFieldInfo from "./PicaFieldInfo.vue"
 import CodeMirror from "codemirror"
 
@@ -70,6 +70,35 @@ import "./addon/lint.js"
 // TODO: import from node_modules/codemirror
 import "./addon/active-line.js"
 import "./addon/lint.css"
+
+// TODO: move to pica-data
+function expandAvramSchema(schema) {    
+  for (let key in schema.fields) {
+    const schedule = schema.fields[key]
+    if (key.indexOf("/") >= 0) {
+      const [tag, occ] = key.split("/")
+      schedule.tag = tag
+      schedule.occurrence = occ
+    } else if (key.indexOf("x") >= 0) {
+      const [tag, counter] = key.split("x")
+      schedule.tag = tag
+      schedule.counter = counter
+      if (schedule.subfields && !("x" in schedule.subfields)) {
+        schedule.subfields.x = {
+          code: "x",
+          label: "x-Occurrence", // TODO: what's the proper name?
+          repeatable: false,
+          required: true,
+        }
+        // TODO: add pattern
+      }
+    } else {
+      schedule.tag = key
+    }
+  }
+
+  return schema
+}
 
 import { picaAtCursor, moveCursorNext, configureMouse } from "./PicaMirror.js"
 
@@ -105,6 +134,11 @@ export default {
       type: String,
       default: null,
     },
+    // added to unAPI query to filter response format
+    xpn: {
+      type: String,
+      default: "",
+    },
     // base URL of catalog to link into
     picabase: {
       type: String,
@@ -134,7 +168,7 @@ export default {
       record: [],        // record in PICA/JSON
       inputPPN: null,    // PPN in input field
       ppn: null,         // PPN found in the record
-      field: null,       // field identifier at cursor
+      field: null,       // field at cursor
       subfield: null,    // subfield code at cursor
       filterRecord,      // filter function
       avramSchema: null, // Avram Schema object
@@ -188,7 +222,7 @@ export default {
     updateCursor()
          
     const updateSchema = (schema) => {
-      this.avramSchema = schema
+      this.avramSchema = expandAvramSchema(schema)
       if (schema && schema.fields) {            
         this.editor.setOption("gutters", ["CodeMirror-lint-markers"])
         this.editor.setOption("lint", { avram: schema })
@@ -218,6 +252,7 @@ export default {
   },
   methods: {
     picaAtCursor,
+    picaFieldIdentifier,
     setText(text) {
       this.text = text
       this.record = parsePica(text)
@@ -237,7 +272,8 @@ export default {
         this.setRecord([])
         return
       }
-      fetchJSON(`${this.unapi}?format=picajson&id=${this.dbkey}:ppn:${this.ppn}`)
+      const xpn = this.xpn ? `!xpn%3D${this.xpn}` : ""
+      fetchJSON(`${this.unapi}?format=picajson&id=${this.dbkey}${xpn}:ppn:${this.ppn}`)
         .then(record => {
           if (record) {
             this.setRecord(record)
