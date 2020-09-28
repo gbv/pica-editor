@@ -1,7 +1,7 @@
 import "./codemirror-pica.js"
 import "./addon/show-hint.js"
 import "./addon/show-hint.css"
-import { picaFieldSchedule } from "pica-data"
+import { picaFieldSchedule, parsePicaLine } from "pica-data"
 
 // show dropdown of possible subfields
 export function subfieldHint(editor, field, avram, current) {
@@ -92,14 +92,15 @@ export function moveCursorNext(editor, avram) {
   }
 }
 
-// get field identifier and subfield code at the cursor
+// get field and subfield code at the cursor
 export function picaAtCursor(editor) {
   const { line, ch } = editor.getCursor()
   const tokens = editor.getLineTokens(line)
   var field
   var subfield
   if (tokens.length && tokens[0].type === "variable-2") {
-    field = tokens[0].string.replace(/^\s+/,"")
+    //field = tokens[0].string.replace(/^\s+/,"")
+    field = parsePicaLine(tokens.map(t => t.string).join(""))
     for(const tok of tokens) {
       if (tok.type === "keyword") subfield = tok.string
       if (tok.end>ch) break
