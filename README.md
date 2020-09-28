@@ -21,7 +21,7 @@ Try online at <https://gbv.github.io/pica-editor/>!
 First include Vue.js 3 and CodeMirror libraries and CodeMirror CSS:
 
 ~~~html
-<script src="https://unpkg.com/vue@next"></script>
+<script src="https://unpkg.com/vue@3.0.0"></script>
 <script src="https://unpkg.com/codemirror"></script>
 <link rel="stylesheet" href="https://unpkg.com/codemirror/lib/codemirror.css">
 ~~~
