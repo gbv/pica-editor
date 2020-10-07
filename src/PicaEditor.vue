@@ -73,6 +73,8 @@ import "./addon/lint.css"
 
 // TODO: move to pica-data
 function expandAvramSchema(schema) {    
+  if (!schema || !schema.fields) return schema
+
   for (let key in schema.fields) {
     const schedule = schema.fields[key]
     if (key.indexOf("/") >= 0) {
