@@ -5,31 +5,6 @@
     <div
       v-if="header"
       class="PicaEditorPanel top">
-      <div style="float:right">
-        <span
-          v-if="avramSchema"
-          style="padding-right: 0.5em"
-          :data-tooltip="avramSchema.title || 'Format-Informationen vorhanden'">
-          <a
-            v-if="avramSchema.url"
-            target="help"
-            :href="avramSchema.url">&#9432;</a>
-          <a
-            v-if="typeof avram === 'string'"
-            :href="avram">⚙ </a>
-        </span>
-        <span v-if="unapi && dbkey">
-          <input
-            v-model="inputPPN"
-            type="text"
-            placeholder="PPN">
-          <button
-            type="submit"
-            :disabled="!inputPPN">
-            laden
-          </button>
-        </span>
-      </div>
       <ul>
         <li v-if="picabase && dbkey">
           <a :href="picabase">{{ dbkey }}</a>
@@ -45,6 +20,33 @@
           </span>
         </li>
       </ul>
+      <div v-if="unapi && dbkey">
+        <input
+          v-model="inputPPN"
+          type="text"
+          placeholder="PPN">
+        <button
+          type="submit"
+          :disabled="!inputPPN">
+          laden
+        </button>
+      </div>
+      <pica-editor-menu>
+        <li v-if="avramSchema">
+          <a
+            v-if="avramSchema.url"
+            target="help"
+            :href="avramSchema.url">
+            {{ avramSchema.title || 'Format-Informationen' }}
+          </a>
+          <span v-else>{{ avramSchema.title || 'Format-Informationen vorhanden' }}</span>
+        </li>
+        <li v-if="avramSchema && typeof avram === 'string'">
+          <a :href="avram">Avram-Schema</a>
+          (<a href="https://format.gbv.de/schema/avram/specification">?</a>)
+        </li>
+        <li><a href="https://gbv.github.io/pica-editor/">pica-editor {{ picaEditorVersion }}</a></li>
+      </pica-editor-menu>
     </div>
     <textarea
       ref="editor"
@@ -60,8 +62,11 @@
 </template>
 
 <script>
+const picaEditorVersion = "0.4.8" // TODO: automatically set
+
 import { serializePica, parsePica, getPPN, picaFieldSchedule, picaFieldIdentifier, reduceRecord } from "pica-data"
 import PicaFieldInfo from "./PicaFieldInfo.vue"
+import PicaEditorMenu from "./PicaEditorMenu.vue"
 import CodeMirror from "codemirror"
 
 import "./codemirror-pica.js"
@@ -114,7 +119,7 @@ async function fetchJSON(url) {
 
 // CodeMirror instance for PICA Plain records
 export default {
-  components: { PicaFieldInfo },
+  components: { PicaFieldInfo, PicaEditorMenu },
   props: {
     // display header
     header: {
@@ -174,6 +179,7 @@ export default {
       subfield: null,    // subfield code at cursor
       filterRecord,      // filter function
       avramSchema: null, // Avram Schema object
+      picaEditorVersion,
     }
   },
   computed: {
@@ -301,6 +307,7 @@ export default {
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
   font-size: 1rem;
+    position: relative;
 }
 .PicaEditor .CodeMirror-gutters {
   background: white;
@@ -333,6 +340,10 @@ export default {
 .PicaEditorPanel.top {
   border-top: 1px solid #ddd;
   padding: 0.5em 0.7em;
+  display: flex;
+  height: 1.5em;
+  justify-content: space-between;
+  align-items: center;
 }    
 .PicaEditorPanel.bottom {
   border-bottom: 1px solid #ddd;
@@ -349,6 +360,7 @@ export default {
 }
 .PicaEditorPanel ul {
   display: inline;
+  margin: 0;
   list-style: none;
   padding: 0;
 }
