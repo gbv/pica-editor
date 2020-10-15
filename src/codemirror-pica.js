@@ -1,7 +1,7 @@
 // PICA mode and PICA linter for CodeMirror
 
 import CodeMirror from "codemirror"
-import { parsePicaLine, picaFieldScheduleIdentifier, picaFieldIdentifier } from "pica-data"
+import { parsePicaLine, picaFieldSchedule, picaFieldIdentifier } from "pica-data"
 
 const FIELD = "variable-2"
 const SUBFIELD = "comment"
@@ -105,9 +105,7 @@ CodeMirror.registerHelper("lint", "pica", (text, options, editor) => {
     if (field) {    
       if (!schema || !schema.fields) return
 
-      const id = picaFieldScheduleIdentifier(schema, field)
-      const schedule = schema.fields[id]
-
+      const schedule = picaFieldSchedule(schema, field)
       if (!schedule) {
         const token = editor.getTokenAt({line, ch: 1})
         found.push({
@@ -119,6 +117,7 @@ CodeMirror.registerHelper("lint", "pica", (text, options, editor) => {
         return
       }
 
+      const id = picaFieldIdentifier(field)
       if (usedFields.has(id) && schedule.repeatable === false) {
         const token = editor.getTokenAt({line, ch: 1})
         found.push({

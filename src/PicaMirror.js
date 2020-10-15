@@ -3,7 +3,7 @@ import "./addon/show-hint.js"
 import "./addon/show-hint.css"
 import { picaFieldSchedule, parsePicaLine } from "pica-data"
 
-// show dropdown of possible subfields
+// show dropdown with possible subfields or insert only subfield possible
 export function subfieldHint(editor, field, avram, current) {
   if (!field[0] || !avram) return
   const { subfields } = picaFieldSchedule(avram, field) || {}
@@ -109,6 +109,7 @@ export function picaAtCursor(editor) {
   return { field, subfield } 
 }
 
+// control what to select on mouse double click
 export function configureMouse(editor, repeat) {
   if (repeat==="double") {
     return { 
