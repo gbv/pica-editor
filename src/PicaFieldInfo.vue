@@ -11,7 +11,7 @@
       </td>
     </tr>
     <tr v-else>
-      <td style="text-align:right">
+      <td style="text-align:right; white-space: nowrap;">
         <code class="cm-variable-2">
           <span
             v-if="field.tag"
@@ -20,7 +20,7 @@
           <span v-if="field.occurrence">/{{ field.occurrence }}</span>
         </code>
       </td>
-      <td>
+      <td style="white-space: nowrap;">
         <code
           v-if="field.pica3"
           data-tooltip="Pica3"
