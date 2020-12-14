@@ -45,6 +45,9 @@
           <li v-if="avramSchema && typeof avram === 'string'">
             <a :href="avram">Avram-Schema</a>&#xA0;<a href="https://format.gbv.de/schema/avram/specification">ⓘ</a>
           </li>
+          <li v-if="source">
+            <a :href="source">record source</a>
+          </li>
           <li><a href="https://gbv.github.io/pica-editor/">pica-editor {{ picaEditorVersion }}</a></li>
         </pica-editor-menu>
       </div>
@@ -176,6 +179,7 @@ export default {
       record: [],        // record in PICA/JSON
       inputPPN: null,    // PPN in input field
       ppn: null,         // PPN found in the record
+      source: null,      // URL to retrieve record
       field: null,       // field at cursor
       subfield: null,    // subfield code at cursor
       filterRecord,      // filter function
@@ -279,10 +283,12 @@ export default {
       }
       if (!this.ppn || !this.dbkey) {
         this.setRecord([])
+        this.source = null
         return
       }
       const xpn = this.xpn ? `!xpn%3D${this.xpn}` : ""
-      fetchJSON(`${this.unapi}?format=picajson&id=${this.dbkey}${xpn}:ppn:${this.ppn}`)
+      this.source = `${this.unapi}?format=picajson&id=${this.dbkey}${xpn}:ppn:${this.ppn}`
+      fetchJSON(this.source)
         .then(record => {
           if (record) {
             this.setRecord(record)
