@@ -20,33 +20,34 @@
           </span>
         </li>
       </ul>
-      <div v-if="unapi && dbkey">
-        <input
-          v-model="inputPPN"
-          type="text"
-          placeholder="PPN">
-        <button
-          type="submit"
-          :disabled="!inputPPN">
-          laden
-        </button>
+      <div style="text-align: right">
+        <span v-if="unapi && dbkey">
+          <input
+            v-model="inputPPN"
+            type="text"
+            placeholder="PPN">
+          <button
+            type="submit"
+            :disabled="!inputPPN">
+            laden
+          </button>
+        </span>
+        <pica-editor-menu>
+          <li v-if="avramSchema">
+            <a
+              v-if="avramSchema.url"
+              target="help"
+              :href="avramSchema.url">
+              {{ avramSchema.title || 'Format-Informationen' }}
+            </a>
+            <span v-else>{{ avramSchema.title || 'Format-Informationen vorhanden' }}</span>
+          </li>
+          <li v-if="avramSchema && typeof avram === 'string'">
+            <a :href="avram">Avram-Schema</a>&#xA0;<a href="https://format.gbv.de/schema/avram/specification">ⓘ</a>
+          </li>
+          <li><a href="https://gbv.github.io/pica-editor/">pica-editor {{ picaEditorVersion }}</a></li>
+        </pica-editor-menu>
       </div>
-      <pica-editor-menu>
-        <li v-if="avramSchema">
-          <a
-            v-if="avramSchema.url"
-            target="help"
-            :href="avramSchema.url">
-            {{ avramSchema.title || 'Format-Informationen' }}
-          </a>
-          <span v-else>{{ avramSchema.title || 'Format-Informationen vorhanden' }}</span>
-        </li>
-        <li v-if="avramSchema && typeof avram === 'string'">
-          <a :href="avram">Avram-Schema</a>
-          (<a href="https://format.gbv.de/schema/avram/specification">?</a>)
-        </li>
-        <li><a href="https://gbv.github.io/pica-editor/">pica-editor {{ picaEditorVersion }}</a></li>
-      </pica-editor-menu>
     </div>
     <textarea
       ref="editor"
