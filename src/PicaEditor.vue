@@ -66,7 +66,7 @@
 </template>
 
 <script>
-const picaEditorVersion = "0.4.8" // TODO: automatically set
+const picaEditorVersion = "0.5.0" // TODO: automatically set
 
 import { serializePica, parsePica, getPPN, picaFieldSchedule, picaFieldIdentifier, reduceRecord } from "pica-data"
 import PicaFieldInfo from "./PicaFieldInfo.vue"
