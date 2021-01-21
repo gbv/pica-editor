@@ -12,5 +12,8 @@
   ],
   "parserOptions": {
     "ecmaVersion": 11
+  },
+  "rules": {
+    "vue/no-v-model-argument": 0
   }
 }

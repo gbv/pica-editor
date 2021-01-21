@@ -41,6 +41,7 @@
     "@babel/core": "^7.12.10",
     "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.1.0",
     "@vitejs/plugin-vue": "^1.1.0",
     "@vue/compiler-sfc": "^3.0.5",

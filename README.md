@@ -104,16 +104,33 @@ Editor instances can be configured with:
 | dbkey | String | database key to load records from via unAPI |
 | xpn | String | optional flag to control request format (`offline` or `online`) |
 | filter | Function/Boolean | function to filter records when loaded or set |
-| picabase | String | base URL of catalog to link into |
 | editable | Boolean | whether PICA record can be edited |
 | avram | Object/URL | Avram Schema with definition of fields and subfields |
 | header | Boolean | show/hide header (default `true`) |
 | footer | Boolean | show/hide footer (default show only if field info is available) |
+| databases | Array | array of databases to select from |
 
-The component emits two events:
+The component emits three events:
 
 * `update:record` when the parsed PICA record has been changed
 * `update:ppn` when the PPN has been changed
+* `update:dbkey` when the database has been changed
+
+Databases, if given, are expected to be objects of this form:
+
+~~~js
+{
+  dbkey: "mandatory database key",
+  title: { de: "German database name (optional)" }
+  picabase: "base URL of catalog to link into (optional)"
+}
+~~~
+
+To reflect selection change of a database enable two-way binding:
+
+~~~html
+<pica-editor :databases="[..]" v-model:dbkey="dbkey" ... />
+~~~
 
 The components provides methods:
 

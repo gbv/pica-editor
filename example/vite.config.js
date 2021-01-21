@@ -11,6 +11,6 @@ module.exports = {
     target: "es2015",
   },
   server: {
-    open: "/example/"
-  }
+    open: "/example/",
+  },
 }
