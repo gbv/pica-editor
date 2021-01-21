@@ -10,4 +10,7 @@ module.exports = {
   build: {
     target: "es2015",
   },
+  server: {
+    open: "/example/"
+  }
 }
