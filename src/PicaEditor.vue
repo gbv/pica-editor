@@ -277,19 +277,17 @@ export default {
       }
     },
     loadRecord(ppn) {
-      if (ppn) {
-        this.ppn = ppn
-      }
-      if (!this.ppn || !this.dbkey) {
+      if (!ppn || !this.dbkey) {
         this.setRecord([])
         this.source = null
         return
       }
       const xpn = this.xpn ? `!xpn%3D${this.xpn}` : ""
-      this.source = `${this.unapi}?format=picajson&id=${this.dbkey}${xpn}:ppn:${this.ppn}`
+      this.source = `${this.unapi}?format=picajson&id=${this.dbkey}${xpn}:ppn:${ppn}`
       fetchJSON(this.source)
         .then(record => {
           if (record) {
+            this.ppn = ppn
             this.setRecord(record)
           }
         })
