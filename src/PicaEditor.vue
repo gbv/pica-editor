@@ -1,7 +1,5 @@
 <template>
-  <form
-    class="PicaEditor"
-    @submit.prevent="loadRecord(inputPPN.trim())">
+  <div class="PicaEditor">
     <div
       v-if="header"
       class="PicaEditorPanel top">
@@ -21,17 +19,21 @@
         </li>
       </ul>
       <div style="text-align: right">
-        <span v-if="unapi && dbkey">
+        <form
+          v-if="unapi && dbkey"
+          style="display: inline"
+          @submit.prevent="loadRecord(inputPPN.trim())">
           <input
             v-model="inputPPN"
             type="text"
             placeholder="PPN">
           <button
             type="submit"
-            :disabled="!inputPPN">
+            :disabled="!inputPPN || isLoading"
+            :style="{ fontWeight: inputPPN === ppn ? 'normal' : 'bold' }">
             laden
           </button>
-        </span>
+        </form>
         <pica-editor-menu>
           <li v-if="avramSchema">
             <a
@@ -62,7 +64,7 @@
         :field="fieldSchedule || (field ? {unknown: picaFieldIdentifier(field)} : {})"
         :subfield="subfield" />
     </div>
-  </form>
+  </div>
 </template>
 
 <script>
@@ -115,10 +117,6 @@ import { picaAtCursor, moveCursorNext, configureMouse } from "./PicaMirror.js"
 
 function getTextChildren(nodes) {
   return nodes.map(node => typeof node.children === "string" ? node.children : "").join("").trim()
-}
-
-async function fetchJSON(url) {
-  return fetch(url).then(response => response.ok ? response.json() : null)
 }
 
 // CodeMirror instance for PICA Plain records
@@ -184,6 +182,7 @@ export default {
       subfield: null,    // subfield code at cursor
       filterRecord,      // filter function
       avramSchema: null, // Avram Schema object
+      isLoading: 0,
       picaEditorVersion,
     }
   },
@@ -253,7 +252,7 @@ export default {
 
     const updateAvram = (avram) => {
       if (typeof avram === "string") {
-        fetchJSON(avram).then(updateSchema)
+        this.fetchJSON(avram).then(updateSchema)
       } else {
         updateSchema(avram)
       }
@@ -284,13 +283,27 @@ export default {
       }
       const xpn = this.xpn ? `!xpn%3D${this.xpn}` : ""
       this.source = `${this.unapi}?format=picajson&id=${this.dbkey}${xpn}:ppn:${ppn}`
-      fetchJSON(this.source)
+      this.fetchJSON(this.source)
         .then(record => {
           if (record) {
             this.ppn = ppn
             this.setRecord(record)
           }
         })
+    },
+    async fetchJSON(url) {
+      this.isLoading++
+      return fetch(url).then(response => {
+        if (response.ok) {
+          this.isLoading--
+          return response.json()
+        } else {
+          throw Error(response.statusText)
+        }
+      }).catch(error => {
+        this.isLoading--
+        throw error
+      })
     },
   },
 }
