@@ -196,7 +196,6 @@ export default {
     record(record, old) {
       if (record === old || JSON.stringify(record) === JSON.stringify(old)) return
       this.$emit("update:record", record)
-
       const ppn = getPPN(record)
       if (ppn && ppn !== this.ppn) {
         this.ppn = ppn
@@ -292,16 +291,6 @@ export default {
         .then(record => {
           if (record) {
             this.setRecord(record)
-          }
-          // TODO: document this or remove
-          if (this.$router) {
-            // Push changed ppn and dbkey to router
-            this.$router.push({
-              query: {
-                ppn: this.ppn,
-                dbkey: this.dbkey,
-              },
-            })
           }
         })
     },
