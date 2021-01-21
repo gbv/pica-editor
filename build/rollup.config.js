@@ -17,12 +17,12 @@ export default {
   },
   external: ["vue", "codemirror"],
   plugins: [
-    commonjs(),
     resolve(),
     vue({
       compileTemplate: true,
     }),
-    css({ output: "dist/pica-editor.css" }),
+    commonjs(),
+    css({ output: "pica-editor.css" }),
     babel({
       babelHelpers: "bundled",
     }),

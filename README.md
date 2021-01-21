@@ -125,7 +125,7 @@ When `filter` is set to `true`, records are filtered to the current `avram` sche
 
 ## Development
 
-During development run a webservice with vite:
+During development run the sample application in `example/` using vite:
 
 ~~~
 npm run dev
