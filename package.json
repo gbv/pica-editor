@@ -1,6 +1,6 @@
 {
   "name": "pica-editor",
-  "version": "0.4.9",
+  "version": "0.5.1",
   "description": "Vue component to display and edit PICA records",
   "main": "dist/pica-editor.js",
   "unpkg": "dist/pica-editor.js",
@@ -13,7 +13,7 @@
   "scripts": {
     "lint": "eslint --fix './{src,example,build}/**/*.{vue,js}'",
     "test": "rm -rf ./coverage && mocha --recursive",
-    "dev": "vite --config vite.config.cjs",
+    "dev": "vite example",
     "build": "rm -rf dist; npm run build:esm && npm run build:umd",
     "build:esm": "rollup --config ./build/rollup.config.js --format es --file dist/pica-editor.esm.js",
     "build:umd": "rollup --config ./build/rollup.config.js --format umd --file dist/pica-editor.js",
@@ -38,24 +38,26 @@
     "url": "https://github.com/gbv/pica-editor/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.6",
-    "@rollup/plugin-babel": "^5.2.1",
-    "@rollup/plugin-commonjs": "^15.1.0",
-    "@rollup/plugin-node-resolve": "^9.0.0",
-    "eslint": "^7.9.0",
-    "eslint-config-gbv": "git+https://github.com/gbv/eslint-config-gbv.git",
-    "eslint-plugin-vue": "^7.0.0-beta.4",
-    "mocha": "^8.1.3",
-    "mocha-eslint": "^6.0.0",
+    "@babel/core": "^7.12.10",
+    "@rollup/plugin-babel": "^5.2.2",
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.1.0",
+    "@vitejs/plugin-vue": "^1.1.0",
+    "@vue/compiler-sfc": "^3.0.5",
+    "eslint": "^7.18.0",
+    "eslint-config-gbv": "^1.0.1",
+    "eslint-plugin-vue": "^7.4.1",
+    "mocha": "^8.2.1",
+    "mocha-eslint": "^7.0.0",
     "pre-commit": "^1.2.2",
     "rollup": "^2.28.2",
-    "rollup-plugin-css-only": "^2.1.0",
-    "rollup-plugin-vue": "^6.0.0-beta.10",
-    "vite": "^1.0.0-rc.4"
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-vue": "^6.0.0",
+    "vite": "^2.0.0-beta.35"
   },
   "dependencies": {
-    "codemirror": "^5.58.1",
+    "codemirror": "^5.59.2",
     "pica-data": "^0.3.2",
-    "vue": "^3.0.0"
+    "vue": "^3.0.5"
   }
 }

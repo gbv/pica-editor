@@ -125,7 +125,7 @@ When `filter` is set to `true`, records are filtered to the current `avram` sche
 
 ## Development
 
-During development run a webservice with vite:
+During development run the sample application in `example/` using vite:
 
 ~~~
 npm run dev
@@ -136,6 +136,8 @@ To create distribution files in `dist/`:
 ~~~
 npm run build
 ~~~
+
+The documentation page `docs/index.html` loads local distribution files if opened at `localhost` and published distribution files otherwise.
 
 All commits should be done to the `dev` branch or to feature branches. For releases run `npm run release minor` or `npm run release patch`, this automatically tags and merges into the `release` branch and pushes to GitHub where the release is published at <https://www.npmjs.com/package/pica-editor> and as GitHub release.
 
