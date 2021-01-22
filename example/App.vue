@@ -2,10 +2,10 @@
   <div>
     <PicaEditor
       ref="editor"
+      v-model:dbkey="dbkey"
       :unapi="unapi"
-      :dbkey="dbkey"
       :xpn="'online'"
-      :picabase="picabase"
+      :databases="databases"
       :avram="avram"
       :footer="true"
       @update:record="updateRecord"
@@ -49,10 +49,21 @@ import PicaEditor from "../src/PicaEditor.vue"
 const config = {
   unapi: "https://unapi.k10plus.de/",
   dbkey: "opac-de-627",
-  picabase: "https://opac.k10plus.de/",
   avramApi: "https://format.k10plus.de/avram.pl",
   profile: "k10plus",
-  examples: [ "161165839X", "1673636357", "168675535X" ],
+  examples: [ "161165839X", "1673636357", "168675535X", "088389065" ],
+  databases: [
+    {
+      dbkey: "opac-de-627",
+      picabase: "https://opac.k10plus.de/",
+      title: { de: "K10plus-Verbundkatalog" },
+    },
+    {
+      dbkey: "oevk",
+      picabase: "https://oevk.k10plus.de/",
+      title: { de: "Verbundkatalog Öffentlicher Bibliotheken" },
+    },
+  ],
 }
 
 export default {

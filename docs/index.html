@@ -49,9 +49,13 @@
   </p>
   <div id="app">
   <h2 id="examples">Examples</h2>
+  <p>
+    Using the following <code>databases</code>:
+    {{databases}}
+  </p>
   <div class="example" title="Demo">
 <pica-editor :dbkey="'opac-de-627'"
-             :picabase="'https://opac.k10plus.de/'"
+             :databases="databases"
              :unapi="'https://unapi.k10plus.de/'"
              :avram="'https://format.k10plus.de/avram.pl?profile=k10plus'">
   <pre>
@@ -78,13 +82,13 @@
   <pre>003@ $0355973081</pre>
 </pica-editor>
     </div>
-    <div class="example" title="Add picabase to make PPN clickable">
-<pica-editor :picabase="'http://opac.k10plus.de/'">
+    <div class="example" title="Add database with picabase to make PPN clickable">
+<pica-editor :databases="[{picabase:'http://opac.k10plus.de/'}]">
   <pre>003@ $0355973081</pre>
 </pica-editor>
     </div>
     <div class="example" title="Add unapi and dbkey to enable record loading">
-<pica-editor :picabase="'http://opac.k10plus.de/'"
+<pica-editor :databases="databases"
              :dbkey="'opac-de-627'" 
              :unapi="'https://unapi.k10plus.de/'">
   <pre>003@ $0355973081</pre>
@@ -92,6 +96,7 @@
     </div>
     <div class="example" title="Filter loaded records to level 0 fields">
 <pica-editor :dbkey="'opac-de-627'" 
+             :databases="databases"
              :unapi="'https://unapi.k10plus.de/'"
              :filter="rec => rec.filter(f => f[0][0]==='0')">
   <pre>003@ $0355973081</pre>
@@ -105,7 +110,14 @@ Vue.createApp({
   components: { PicaEditor },
   data: () => {
     return { 
-      avram: "https://format.k10plus.de/avram.pl?profile=k10plus"
+      avram: "https://format.k10plus.de/avram.pl?profile=k10plus",
+      databases: [
+        {
+          dbkey: "opac-de-627",
+          picabase: "https://opac.k10plus.de/",
+          title: { de: "K10plus-Verbundkatalog" },
+        },
+      ],
     }
   }
 }).mount("#app")

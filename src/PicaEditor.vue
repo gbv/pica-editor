@@ -1,19 +1,17 @@
 <template>
-  <form
-    class="PicaEditor"
-    @submit.prevent="loadRecord(inputPPN.trim())">
+  <div class="PicaEditor">
     <div
       v-if="header"
       class="PicaEditorPanel top">
       <ul>
-        <li v-if="picabase && dbkey">
-          <a :href="picabase">{{ dbkey }}</a>
+        <li v-if="selectedDatabase.picabase">
+          <a :href="selectedDatabase.picabase">{{ selectedDatabase.dbkey }}</a>
         </li>
         <li v-if="ppn">
           <label style="font-variant:small-caps">ppn </label>
           <a
-            v-if="picabase"
-            :href="picabase+'PPNSET?PPN='+ppn"
+            v-if="selectedDatabase.picabase"
+            :href="`${selectedDatabase.picabase}PPNSET?PPN=${ppn}`"
             target="opac"><code>{{ ppn }}</code></a>
           <span v-else>
             <code>{{ ppn }}</code>
@@ -21,17 +19,39 @@
         </li>
       </ul>
       <div style="text-align: right">
-        <span v-if="unapi && dbkey">
-          <input
-            v-model="inputPPN"
-            type="text"
-            placeholder="PPN">
-          <button
-            type="submit"
-            :disabled="!inputPPN">
-            laden
-          </button>
-        </span>
+        <form
+          style="display: inline"
+          @submit.prevent="loadRecord(inputPPN.trim())">
+          <ul>
+            <li v-if="databases.length === 1">
+              <database-name :database="databases[0]" />
+            </li>
+            <li v-if="databases.length > 1 && unapi">
+              <select
+                @change="$emit('update:dbkey',$event.target.value)">
+                <option
+                  v-for="db in databases"
+                  :key="db.dbkey"
+                  :value="db.dbkey"
+                  :selected="dbkey == db.dbkey">
+                  <database-name :database="db" />
+                </option>
+              </select>
+            </li>
+            <li v-if="dbkey && unapi">
+              <input
+                v-model="inputPPN"
+                type="text"
+                placeholder="PPN">
+              <button
+                type="submit"
+                :disabled="!inputPPN || isLoading"
+                :style="{ fontWeight: inputPPN === ppn ? 'normal' : 'bold' }">
+                laden
+              </button>
+            </li>
+          </ul>
+        </form>
         <pica-editor-menu>
           <li v-if="avramSchema">
             <a
@@ -48,7 +68,6 @@
           <li v-if="source">
             <a :href="source">record source</a>
           </li>
-          <li><a href="https://gbv.github.io/pica-editor/">pica-editor {{ picaEditorVersion }}</a></li>
         </pica-editor-menu>
       </div>
     </div>
@@ -62,15 +81,14 @@
         :field="fieldSchedule || (field ? {unknown: picaFieldIdentifier(field)} : {})"
         :subfield="subfield" />
     </div>
-  </form>
+  </div>
 </template>
 
 <script>
-const picaEditorVersion = "0.5.0" // TODO: automatically set
-
 import { serializePica, parsePica, getPPN, picaFieldSchedule, picaFieldIdentifier, reduceRecord } from "pica-data"
 import PicaFieldInfo from "./PicaFieldInfo.vue"
 import PicaEditorMenu from "./PicaEditorMenu.vue"
+import DatabaseName from "../src/DatabaseName.vue"
 import CodeMirror from "codemirror"
 
 import "./codemirror-pica.js"
@@ -117,13 +135,9 @@ function getTextChildren(nodes) {
   return nodes.map(node => typeof node.children === "string" ? node.children : "").join("").trim()
 }
 
-async function fetchJSON(url) {
-  return fetch(url).then(response => response.ok ? response.json() : null)
-}
-
 // CodeMirror instance for PICA Plain records
 export default {
-  components: { PicaFieldInfo, PicaEditorMenu },
+  components: { PicaFieldInfo, PicaEditorMenu, DatabaseName },
   props: {
     // display header
     header: {
@@ -139,21 +153,21 @@ export default {
     unapi: {
       type: String,
       default: null,
-    },
+    },      
     // database key to load records from via unAPI
     dbkey: {
       type: String,
       default: null,
     },
+    // PICA databases
+    databases: {
+      type: Array,
+      default: () => [],
+    },
     // added to unAPI query to filter response format
     xpn: {
       type: String,
       default: "",
-    },
-    // base URL of catalog to link into
-    picabase: {
-      type: String,
-      default: null,
     },
     // whether PICA record can be edited
     editable: {
@@ -171,7 +185,7 @@ export default {
       default: null,
     },
   },
-  emits: ["update:record", "update:ppn"],
+  emits: ["update:record", "update:ppn", "update:dbkey"],
   data: function() {
     const filterRecord = typeof this.filter === "function" ? this.filter : null
     return {
@@ -184,28 +198,37 @@ export default {
       subfield: null,    // subfield code at cursor
       filterRecord,      // filter function
       avramSchema: null, // Avram Schema object
-      picaEditorVersion,
+      isLoading: 0,
     }
   },
   computed: {
+    selectedDatabase() {
+      if (this.databases.length === 1) return this.databases[0]
+      return this.databases.find(db => db.dbkey === this.dbkey) || {}
+    },
     fieldSchedule() {
       return picaFieldSchedule(this.avramSchema, this.field)
-    },
+    },    
   },
   watch: {
     record(record, old) {
       if (record === old || JSON.stringify(record) === JSON.stringify(old)) return
       this.$emit("update:record", record)
-
       const ppn = getPPN(record)
       if (ppn && ppn !== this.ppn) {
         this.ppn = ppn
       }
     },
     ppn(ppn, old) {
-      if (ppn === old) return
-      this.$emit("update:ppn", ppn)
-      if (!this.inputPPN) this.inputPPN = ppn
+      if (ppn !== old) {
+        this.$emit("update:ppn", ppn)
+        if (!this.inputPPN) this.inputPPN = ppn
+      }
+    },
+    dbkey(dbkey, old) {
+      if (dbkey !== old) {
+        this.loadRecord(this.ppn)
+      }
     },
   },
   created() {
@@ -254,7 +277,7 @@ export default {
 
     const updateAvram = (avram) => {
       if (typeof avram === "string") {
-        fetchJSON(avram).then(updateSchema)
+        this.fetchJSON(avram).then(updateSchema)
       } else {
         updateSchema(avram)
       }
@@ -278,32 +301,34 @@ export default {
       }
     },
     loadRecord(ppn) {
-      if (ppn) {
-        this.ppn = ppn
-      }
-      if (!this.ppn || !this.dbkey) {
+      if (!ppn || !this.dbkey) {
         this.setRecord([])
         this.source = null
         return
       }
       const xpn = this.xpn ? `!xpn%3D${this.xpn}` : ""
-      this.source = `${this.unapi}?format=picajson&id=${this.dbkey}${xpn}:ppn:${this.ppn}`
-      fetchJSON(this.source)
+      this.source = `${this.unapi}?format=picajson&id=${this.dbkey}${xpn}:ppn:${ppn}`
+      this.fetchJSON(this.source)
         .then(record => {
           if (record) {
+            this.ppn = ppn
             this.setRecord(record)
           }
-          // TODO: document this or remove
-          if (this.$router) {
-            // Push changed ppn and dbkey to router
-            this.$router.push({
-              query: {
-                ppn: this.ppn,
-                dbkey: this.dbkey,
-              },
-            })
-          }
         })
+    },
+    async fetchJSON(url) {
+      this.isLoading++
+      return fetch(url).then(response => {
+        if (response.ok) {
+          this.isLoading--
+          return response.json()
+        } else {
+          throw Error(response.statusText)
+        }
+      }).catch(error => {
+        this.isLoading--
+        throw error
+      })
     },
   },
 }

@@ -8,15 +8,22 @@
       v-if="visible"
       class="pica-editor-menu-list">
       <slot />
+      <li>
+        <a :href="homepage">pica-editor {{ version }}</a>
+      </li>
     </ul>
   </div>
 </template>
 
 <script>
+import { version, homepage } from "../package.json"
+
 export default {
   data() {
     return {
       visible: 0,
+      version,
+      homepage,
     }
   },
 }</script>
