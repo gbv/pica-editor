@@ -2,7 +2,6 @@
   <div>
     <PicaEditor
       ref="editor"
-      v-model:dbkey="dbkey"
       :unapi="unapi"
       :xpn="'online'"
       :databases="databases"
@@ -48,7 +47,6 @@ import PicaEditor from "../src/PicaEditor.vue"
 
 const config = {
   unapi: "https://unapi.k10plus.de/",
-  dbkey: "opac-de-627",
   avramApi: "https://format.k10plus.de/avram.pl",
   profile: "k10plus",
   examples: [ "161165839X", "1673636357", "168675535X", "088389065" ],
@@ -71,7 +69,7 @@ export default {
   data() {
     return {
       ...config,
-      avram: config.avramApi+"?profile="+config.profile,
+      avram: `${config.avramApi}?profile=${config.profile}`,
     } 
   },
   methods: {

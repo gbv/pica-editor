@@ -33,12 +33,12 @@
                   v-for="db in databases"
                   :key="db.dbkey"
                   :value="db.dbkey"
-                  :selected="dbkey == db.dbkey">
+                  :selected="selectedDatabase === db">
                   <database-name :database="db" />
                 </option>
               </select>
             </li>
-            <li v-if="dbkey && unapi">
+            <li v-if="selectedDatabase.dbkey && unapi">
               <input
                 v-model="inputPPN"
                 type="text"
@@ -186,7 +186,7 @@ export default {
     },
   },
   emits: ["update:record", "update:ppn", "update:dbkey"],
-  data: function() {
+  data() {
     const filterRecord = typeof this.filter === "function" ? this.filter : null
     return {
       text: "",          // record in PICA Plain
@@ -203,8 +203,13 @@ export default {
   },
   computed: {
     selectedDatabase() {
-      if (this.databases.length === 1) return this.databases[0]
-      return this.databases.find(db => db.dbkey === this.dbkey) || {}
+      const { databases, dbkey } = this
+      if (databases.length) {
+        if (databases.length === 1 || !dbkey) return databases[0]
+        return databases.find(db => db.dbkey === dbkey) || { dbkey }
+      } else {
+        return { dbkey }
+      }
     },
     fieldSchedule() {
       return picaFieldSchedule(this.avramSchema, this.field)
@@ -235,7 +240,7 @@ export default {
     const slot = this.$slots.default
     this.setText(slot ? getTextChildren(slot()) : "")
   },
-  mounted: function() {
+  mounted() {
     const options = {
       mode: "pica",
       value: this.text,
@@ -301,13 +306,14 @@ export default {
       }
     },
     loadRecord(ppn) {
-      if (!ppn || !this.dbkey) {
+      const { dbkey } = this.selectedDatabase 
+      if (!ppn || !dbkey) {
         this.setRecord([])
         this.source = null
         return
       }
       const xpn = this.xpn ? `!xpn%3D${this.xpn}` : ""
-      this.source = `${this.unapi}?format=picajson&id=${this.dbkey}${xpn}:ppn:${ppn}`
+      this.source = `${this.unapi}?format=picajson&id=${dbkey}${xpn}:ppn:${ppn}`
       this.fetchJSON(this.source)
         .then(record => {
           if (record) {
