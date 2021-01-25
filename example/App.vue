@@ -2,13 +2,14 @@
   <div>
     <PicaEditor
       ref="editor"
+      v-model:ppn="ppn"
+      v-model:dbkey="dbkey"
       :unapi="unapi"
       :xpn="'online'"
       :databases="databases"
       :avram="avram"
       :footer="true"
-      @update:record="updateRecord"
-      @update:ppn="updatePPN">
+      @update:record="updateRecord">
       <pre>
 003@ $0355973081
 010@ $ager
@@ -50,6 +51,8 @@ const config = {
   avramApi: "https://format.k10plus.de/avram.pl",
   profile: "k10plus",
   examples: [ "161165839X", "1673636357", "168675535X", "088389065" ],
+  ppn: undefined,
+  dbkey: undefined,
   databases: [
     {
       dbkey: "opac-de-627",
@@ -81,9 +84,6 @@ export default {
     },
     updateRecord() {
       console.log("updateRecord")
-    },
-    updatePPN(ppn) {
-      console.log(ppn)
     },
   },
 }

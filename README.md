@@ -102,6 +102,7 @@ Editor instances can be configured with:
 |----|----|-----------|
 | unAPI | String | unAPI base URL to load records from |
 | dbkey | String | database key to load records from via unAPI |
+| ppn | String | record PPN to load |
 | xpn | String | optional flag to control request format (`offline` or `online`) |
 | filter | Function/Boolean | function to filter records when loaded or set |
 | editable | Boolean | whether PICA record can be edited |
@@ -113,7 +114,7 @@ Editor instances can be configured with:
 The component emits three events:
 
 * `update:record` when the parsed PICA record has been changed
-* `update:ppn` when the PPN has been changed
+* `update:ppn` when the PPN of the parsed PICA record has been changed
 * `update:dbkey` when the database has been changed
 
 Databases, if given, are expected to be objects of this form:
@@ -126,17 +127,17 @@ Databases, if given, are expected to be objects of this form:
 }
 ~~~
 
-To reflect selection change of a database enable two-way binding:
+To reflect selection change of database and ppn enable two-way binding:
 
 ~~~html
-<pica-editor :databases="[..]" v-model:dbkey="dbkey" ... />
+<pica-editor :databases="[..]" v-model:dbkey="dbkey" v-model:ppn="ppn" ... />
 ~~~
 
 The components provides methods:
 
 * `setRecord` to set the PICA record in PICA/JSON structure
 * `setText` to set the PICA record in PICA Plain syntax
-* `loadRecord(ppn)` to load a PICA record via unAPI
+* `load` to load a PICA record via unAPI (automatically triggered when properties `ppn` and/or `dbkey` are modified)
 
 When `filter` is set to `true`, records are filtered to the current `avram` schema.
 

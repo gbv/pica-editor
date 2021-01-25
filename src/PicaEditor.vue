@@ -7,21 +7,21 @@
         <li v-if="selectedDatabase.picabase">
           <a :href="selectedDatabase.picabase">{{ selectedDatabase.dbkey }}</a>
         </li>
-        <li v-if="ppn">
+        <li v-if="recordPPN">
           <label style="font-variant:small-caps">ppn </label>
           <a
             v-if="selectedDatabase.picabase"
-            :href="`${selectedDatabase.picabase}PPNSET?PPN=${ppn}`"
-            target="opac"><code>{{ ppn }}</code></a>
+            :href="`${selectedDatabase.picabase}PPNSET?PPN=${recordPPN}`"
+            target="opac"><code>{{ recordPPN }}</code></a>
           <span v-else>
-            <code>{{ ppn }}</code>
+            <code>{{ recordPPN }}</code>
           </span>
         </li>
       </ul>
       <div style="text-align: right">
         <form
           style="display: inline"
-          @submit.prevent="loadRecord(inputPPN.trim())">
+          @submit.prevent="load">
           <ul>
             <li v-if="databases.length === 1">
               <database-name :database="databases[0]" />
@@ -46,7 +46,7 @@
               <button
                 type="submit"
                 :disabled="!inputPPN || isLoading"
-                :style="{ fontWeight: inputPPN === ppn ? 'normal' : 'bold' }">
+                :style="{ fontWeight: inputPPN === recordPPN ? 'normal' : 'bold' }">
                 laden
               </button>
             </li>
@@ -71,9 +71,7 @@
         </pica-editor-menu>
       </div>
     </div>
-    <textarea
-      ref="editor"
-      v-model="text" />
+    <textarea ref="editor" />
     <div
       v-if="footer === true || (footer !== false && avramSchema && field)"
       class="PicaEditorPanel bottom cm-s-default">
@@ -157,12 +155,17 @@ export default {
     // database key to load records from via unAPI
     dbkey: {
       type: String,
-      default: null,
-    },
+      default: undefined,
+    },    
     // PICA databases
     databases: {
       type: Array,
       default: () => [],
+    },
+    // PPN of the record to be loaded
+    ppn: {
+      type: String,
+      default: null,
     },
     // added to unAPI query to filter response format
     xpn: {
@@ -192,8 +195,8 @@ export default {
       text: "",          // record in PICA Plain
       record: [],        // record in PICA/JSON
       inputPPN: null,    // PPN in input field
-      ppn: null,         // PPN found in the record
-      source: null,      // URL to retrieve record
+      recordPPN: null,   // PPN found in the record
+      source: null,      // URL to retrieve record from
       field: null,       // field at cursor
       subfield: null,    // subfield code at cursor
       filterRecord,      // filter function
@@ -216,29 +219,33 @@ export default {
     },    
   },
   watch: {
+    text(text, old) {
+      if (text !== old) {
+        this.record = parsePica(text)
+      }
+    },
     record(record, old) {
       if (record === old || JSON.stringify(record) === JSON.stringify(old)) return
+      this.recordPPN = getPPN(record)
       this.$emit("update:record", record)
-      const ppn = getPPN(record)
-      if (ppn && ppn !== this.ppn) {
-        this.ppn = ppn
-      }
+      this.$emit("update:ppn", this.recordPPN)
     },
     ppn(ppn, old) {
-      if (ppn !== old) {
-        this.$emit("update:ppn", ppn)
-        if (!this.inputPPN) this.inputPPN = ppn
+      if (ppn && ppn !== old && ppn !== this.recordPPN) {
+        this.inputPPN = ppn
+        this.load()
       }
+      if (!this.inputPPN) this.inputPPN = ppn
     },
     dbkey(dbkey, old) {
-      if (dbkey !== old) {
-        this.loadRecord(this.ppn)
+      if (dbkey && dbkey !== old) {
+        this.load()
       }
     },
   },
   created() {
     const slot = this.$slots.default
-    this.setText(slot ? getTextChildren(slot()) : "")
+    this.text = slot ? getTextChildren(slot()) : ""
   },
   mounted() {
     const options = {
@@ -255,8 +262,7 @@ export default {
 
     const ed = this.$refs.editor
     this.editor = CodeMirror(e => ed.parentNode.replaceChild(e, ed), options)
-
-    this.editor.on("change", editor => this.setText(editor.getValue()))
+    this.editor.on("change", editor => this.text = editor.getValue())
 
     const updateCursor = () => Object.assign(this, this.picaAtCursor(this.editor))
     this.editor.on("cursorActivity", updateCursor)
@@ -282,7 +288,7 @@ export default {
 
     const updateAvram = (avram) => {
       if (typeof avram === "string") {
-        this.fetchJSON(avram).then(updateSchema)
+        this.fetchJSON(avram).then(updateSchema) // TODO: catch error?
       } else {
         updateSchema(avram)
       }
@@ -290,23 +296,29 @@ export default {
 
     this.$watch("avram", updateAvram)
     updateAvram(this.avram)
+
+    // TODO: initially load record if ppn is set?
   },
   methods: {
     picaAtCursor,
     picaFieldIdentifier,
     setText(text) {
-      this.text = text
-      this.record = parsePica(text)
+      if (this.editor) {
+        this.editor.setValue(text)
+      } else {
+        this.text = text
+      }
     },
     setRecord(record) {
       this.record = this.filterRecord ? this.filterRecord(record) : record
-      this.text = serializePica(this.record)
-      if (this.editor) { // editor may be not mounted yet
-        this.editor.setValue(this.text)
-      }
+      this.setText(serializePica(this.record))
     },
-    loadRecord(ppn) {
+    load() {
+      const ppn = this.inputPPN.trim()
+
+      this.inputPPN = ppn
       const { dbkey } = this.selectedDatabase 
+
       if (!ppn || !dbkey) {
         this.setRecord([])
         this.source = null
@@ -316,12 +328,16 @@ export default {
       this.source = `${this.unapi}?format=picajson&id=${dbkey}${xpn}:ppn:${ppn}`
       this.fetchJSON(this.source)
         .then(record => {
-          if (record) {
-            this.ppn = ppn
-            this.setRecord(record)
+          this.setRecord(record)
+          this.$emit("update:ppn", ppn)
+          if (!this.dbkey) {
+            this.$emit("update:dbkey", dbkey)
           }
+        }).catch(() => {
+          this.setText(`Failed to load PICA record ${dbkey}:ppn:${ppn}`)
         })
     },
+    // load a JSON document, keeping track of loading indicator and errors
     async fetchJSON(url) {
       this.isLoading++
       return fetch(url).then(response => {
