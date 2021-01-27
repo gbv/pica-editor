@@ -56,6 +56,7 @@
   <div class="example" title="Demo">
 <pica-editor :databases="databases"
              :unapi="'https://unapi.k10plus.de/'"
+             :xpn="'online'"
              :avram="'https://format.k10plus.de/avram.pl?profile=k10plus'">
   <pre>
 003@ $0355973081
@@ -100,12 +101,31 @@
   <pre>003@ $0355973081</pre>
 </pica-editor>
     </div>
+
+    <h2>PicaLoader</h2>
+    <p>
+The PicaLoader component can also be used as independent form interface for loading PICA
+records:
+<pre class="html">
+const { PicaLoader } = PicaEditor.components
+</pre>
+    </p>
+
+<div class="example">
+<pica-loader :databases="databases"
+             :unapi="'https://unapi.k10plus.de/'" />
+</div>
+
   </div>
 </body>
 <script src="examples.js"></script>
 <script>
+const { PicaLoader } = PicaEditor.components
+
+console.log(PicaEditor)
+
 Vue.createApp({
-  components: { PicaEditor },
+  components: { PicaEditor, PicaLoader },
   data: () => {
     return { 
       avram: "https://format.k10plus.de/avram.pl?profile=k10plus",

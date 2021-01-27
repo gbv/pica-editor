@@ -1,9 +1,18 @@
 <template>
   <div>
+    <hr>
+    <PicaLoader
+      v-model:ppn="loadingPPN" 
+      v-model:dbkey="loadingDbkey" 
+      v-model:record="loadingRecord"
+      v-model:error="loadingError"
+      :databases="[{dbkey:'opac-de-627',title:{de:'foo'}}]" 
+      :unapi="unapi" />
+    <hr>
     <PicaEditor
       ref="editor"
-      v-model:ppn="ppn"
-      v-model:dbkey="dbkey"
+      :ppn="ppn"
+      :dbkey="dbkey"
       :unapi="unapi"
       :xpn="'online'"
       :databases="databases"
@@ -36,7 +45,7 @@
         <li
           v-for="ex in examples"
           :key="ex">
-          <a @click="loadRecord(ex)">{{ ex }}</a>
+          <a @click="ppn = ex">{{ ex }}</a>
         </li>
       </ul>
     </div> 
@@ -45,6 +54,7 @@
 
 <script>
 import PicaEditor from "../src/PicaEditor.vue"
+import PicaLoader from "../src/PicaLoader.vue"
 
 const config = {
   unapi: "https://unapi.k10plus.de/",
@@ -68,20 +78,18 @@ const config = {
 }
 
 export default {
-  components: { PicaEditor },
+  components: { PicaEditor, PicaLoader },
   data() {
     return {
       ...config,
       avram: `${config.avramApi}?profile=${config.profile}`,
+      loadingError: null,
+      loadingRecord: [],
+      loadingDbkey: null,
+      loadingPPN: "355973081",
     } 
   },
   methods: {
-    loadRecord(ppn) {
-      // Use $nextTick to give dbkey the chance to propagate to PicaEditor
-      this.$nextTick(() => {
-        this.$refs.editor.loadRecord(ppn)
-      })
-    },
     updateRecord() {
       console.log("updateRecord")
     },

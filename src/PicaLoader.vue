@@ -35,7 +35,7 @@
           <input
             v-model="xpn"
             type="checkbox">
-          <small>offline</small>
+          <small>expand</small>
         </label>
         <a
           v-if="source"
@@ -80,19 +80,25 @@ export default {
       type: String,        
       default: () => "",
     },
-    // enable offline expansion (default, can be bound with `v-model:offline`)
-    offline: {
+    // enable offline expansion (default, can be bound with `v-model:expand`)      
+    expand: {
       type: Boolean,
       default: true,
     },
+    // record that has been loaded
+    record: {
+      type: Array,
+      default: () => null,
+    },
   },
-  emits: ["update:dbkey", "update:ppn", "update:xpn", "update:record", "update:error", "update:source", "update:offline"],
+  emits: ["update:dbkey", "update:ppn", "update:xpn", "update:record", "update:error", "update:source", "update:expand"],
   data() {
     return {
-      inputPPN: this.ppn,        
+      inputPPN: this.ppn || getPPN(this.record),        
       loadedPPN: null,
-      xpn: this.offline,
+      xpn: this.expand,
       isLoading: false,
+      source: null,
       error: null,
     }
   },
@@ -113,8 +119,11 @@ export default {
     error(value) {
       this.$emit("update:error", value)
     },
-    xpn(value) {
-      this.$emit("update:offline", value)
+    xpn(value, old) {
+      if (value !== old && this.loadedPPN) {
+        this.load()
+      }
+      this.$emit("update:expand", value)
     },
     ppn(value) {
       if (value !== this.inputPPN) {
@@ -122,6 +131,17 @@ export default {
       }
       // trigger record loading
       if (!this.isLoading && value !== this.loadedPPN) {
+        this.load()
+      }
+    },
+    record(value) {
+      const ppn = getPPN(value)
+      if (ppn) {
+        this.inputPPN = getPPN(value)
+      }
+    },
+    dbkey(value, old) {
+      if (this.inputPPN && old && old !== (this.selectedDatabase || {}).dbkey) {
         this.load()
       }
     },
@@ -134,7 +154,7 @@ export default {
     }
 
     // automatically load record if PPN was given
-    if (this.inputPPN) {
+    if (this.ppn) {
       this.load()
     }
   },
